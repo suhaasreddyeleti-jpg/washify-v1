@@ -1060,34 +1060,8 @@ const APP = {
   // =========================================================
 
   now() {
-
-    if (!this.state.demoMode) {
-
-      return Date.now();
-    }
-
-
-    if (this._demoBase === undefined) {
-
-      this._demoBase =
-        Date.now();
-
-      this._demoStart =
-        Date.now();
-    }
-
-
-    return (
-      this._demoBase +
-      (
-        Date.now() -
-        this._demoStart
-      ) *
-      this.speedFactor
-    );
-  },
-
-
+  return Date.now();
+},
   tick() {
 
     this.updateBookings();
