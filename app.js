@@ -9,9 +9,11 @@
    - Users can only manage their own bookings
    - One active booking per user
    - Machine availability visible to everyone
-   - Demo mode
    - 15-minute confirmation
    - 5-minute confirmation window
+   - 90-minute machine cycle
+   - 5-minute pre-completion in-app reminder
+   - Booking contact details on booked slots
    - Booking success animation
    - Cross-device synchronization
    ============================================================ */
@@ -42,12 +44,7 @@ const APP = {
     user: null,
     profile: null,
 
-    // IMPORTANT:
-    // This now contains ALL visible bookings,
-    // not only the current user's bookings.
     bookings: [],
-
-    demoMode: true,
 
     currentView: 'login',
     selectedMachine: null,
@@ -55,8 +52,10 @@ const APP = {
     isOnlineListener: false,
     isLoadingBookings: false,
 
-    // Firestore unsubscribe function
-    bookingUnsubscribe: null
+    bookingUnsubscribe: null,
+
+    // Booking/contact details currently being viewed
+    selectedBooking: null
   },
 
 
@@ -87,15 +86,17 @@ const APP = {
   // TIME SETTINGS
   // =========================================================
 
-  speedFactor: 60,
-
-  SLOT_MS: 60 * 60 * 1000,
+  // 90 minutes = 1.5 hours
+  SLOT_MS: 90 * 60 * 1000,
 
   // 15 minutes before booking
   CONFIRM_LEAD_MS: 15 * 60 * 1000,
 
   // 5 minute confirmation window
   CONFIRM_WINDOW_MS: 5 * 60 * 1000,
+
+  // 5 minutes before machine completion
+  COMPLETION_REMINDER_MS: 5 * 60 * 1000,
 
 
   // =========================================================
@@ -143,6 +144,7 @@ const APP = {
         this.state.isLoadingBookings = false;
 
         this.state.selectedMachine = null;
+        this.state.selectedBooking = null;
 
         this.showView('login');
       }
@@ -217,18 +219,6 @@ const APP = {
     this.state.isLoadingBookings = true;
 
     try {
-
-      /*
-       * IMPORTANT FIX
-       *
-       * DO NOT use:
-       *
-       * .where('userId', '==', this.state.user.uid)
-       *
-       * because Washify needs global machine availability.
-       *
-       * We load all authenticated-visible bookings.
-       */
 
       const snap = await db
         .collection('bookings')
@@ -321,11 +311,6 @@ const APP = {
       return;
     }
 
-    /*
-     * Only the owner is allowed to update
-     * the booking under your Firestore rules.
-     */
-
     if (
       !this.state.user ||
       booking.userId !== this.state.user.uid
@@ -396,6 +381,59 @@ const APP = {
 
 
         // -----------------------------------------------------
+        // BOOKING INFO MODAL CLOSE
+        // -----------------------------------------------------
+
+        if (
+          t.closest('[data-booking-info-close]')
+        ) {
+
+          this.closeBookingInfo();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // BOOKING INFO BACKDROP
+        // -----------------------------------------------------
+
+        if (
+          t.id === 'booking-info-backdrop'
+        ) {
+
+          this.closeBookingInfo();
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // CALL BOOKING USER
+        // -----------------------------------------------------
+
+        const callBtn =
+          t.closest('[data-call-booking]');
+
+        if (callBtn) {
+
+          const bookingId =
+            callBtn.dataset.callBooking;
+
+          const booking =
+            this.state.bookings.find(
+              b => b.id === bookingId
+            );
+
+          if (booking) {
+            this.callBookingUser(booking);
+          }
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
         // MACHINE ACTION BUTTONS
         // -----------------------------------------------------
 
@@ -459,21 +497,73 @@ const APP = {
         // -----------------------------------------------------
 
         const slot =
-          t.closest(
-            '.slot:not(.past):not(.taken):not(.mine):not(.running)'
-          );
+          t.closest('.slot');
 
         if (slot) {
 
-          this.bookSlot(
-            slot.dataset.machine,
-            parseInt(
-              slot.dataset.start,
-              10
-            )
-          );
+          // Past slots cannot be opened
+          if (
+            slot.classList.contains('past')
+          ) {
+            return;
+          }
 
-          return;
+          // Own booking remains disabled
+          if (
+            slot.classList.contains('mine')
+          ) {
+            return;
+          }
+
+          // Running slots can be viewed
+          if (
+            slot.classList.contains('running')
+          ) {
+
+            const bookingId =
+              slot.dataset.bookingId;
+
+            if (bookingId) {
+              this.openBookingInfo(
+                bookingId
+              );
+            }
+
+            return;
+          }
+
+          // Other booked/taken slots can be viewed
+          if (
+            slot.classList.contains('taken')
+          ) {
+
+            const bookingId =
+              slot.dataset.bookingId;
+
+            if (bookingId) {
+              this.openBookingInfo(
+                bookingId
+              );
+            }
+
+            return;
+          }
+
+          // Free slot = booking action
+          if (
+            slot.classList.contains('free')
+          ) {
+
+            this.bookSlot(
+              slot.dataset.machine,
+              parseInt(
+                slot.dataset.start,
+                10
+              )
+            );
+
+            return;
+          }
         }
 
 
@@ -580,35 +670,6 @@ const APP = {
           e.preventDefault();
 
           this.handleSaveUsername();
-        }
-      );
-    }
-
-
-    // ---------------------------------------------------------
-    // DEMO TOGGLE
-    // ---------------------------------------------------------
-
-    const demoToggle =
-      document.getElementById(
-        'demo-toggle'
-      );
-
-    if (demoToggle) {
-
-      demoToggle.addEventListener(
-        'change',
-        (e) => {
-
-          this.state.demoMode =
-            e.target.checked;
-
-          this._demoBase = this.now();
-
-          this._demoStart =
-            Date.now();
-
-          this.render();
         }
       );
     }
@@ -812,7 +873,6 @@ const APP = {
 
     this.cleanupBookingListener();
 
-
     try {
 
       await auth.signOut();
@@ -827,12 +887,10 @@ const APP = {
 
 
     this.state.user = null;
-
     this.state.profile = null;
-
     this.state.bookings = [];
-
     this.state.selectedMachine = null;
+    this.state.selectedBooking = null;
 
     this.state.isOnlineListener = false;
 
@@ -861,12 +919,6 @@ const APP = {
       );
     }
 
-
-    /*
-     * IMPORTANT:
-     * Load ALL bookings before dashboard
-     * and then start global listener.
-     */
 
     await this.loadBookings();
 
@@ -928,20 +980,6 @@ const APP = {
       true;
 
 
-    /*
-     * IMPORTANT FIX:
-     *
-     * OLD:
-     *
-     * .where('userId', '==', currentUser.uid)
-     *
-     * NEW:
-     *
-     * Listen to ALL authenticated-visible bookings.
-     *
-     * This allows every user to see machine availability.
-     */
-
     const unsubscribe =
       db.collection('bookings')
         .onSnapshot(
@@ -958,13 +996,6 @@ const APP = {
 
             });
 
-
-            /*
-             * Keep a complete global booking state.
-             *
-             * userActiveBookings() filters this
-             * to the current user when needed.
-             */
 
             this.state.bookings =
               all.sort(
@@ -1060,8 +1091,10 @@ const APP = {
   // =========================================================
 
   now() {
-  return Date.now();
-},
+    return Date.now();
+  },
+
+
   tick() {
 
     this.updateBookings();
@@ -1071,6 +1104,8 @@ const APP = {
     this.updateMachineCards();
 
     this.updateAwaitingBanner();
+
+    this.updateCompletionReminder();
 
 
     if (
@@ -1107,8 +1142,7 @@ const APP = {
         now >=
           b.startTime -
           this.CONFIRM_LEAD_MS &&
-        now <
-          b.startTime
+        now < b.startTime
       ) {
 
         b.status =
@@ -1118,11 +1152,6 @@ const APP = {
           b.startTime -
           this.CONFIRM_WINDOW_MS;
 
-
-        /*
-         * Only the booking owner should
-         * write status under our rules.
-         */
 
         if (
           this.state.user &&
@@ -1271,10 +1300,6 @@ const APP = {
   },
 
 
-  // ---------------------------------------------------------
-  // CURRENT USER'S ACTIVE BOOKINGS
-  // ---------------------------------------------------------
-
   userActiveBookings() {
 
     if (!this.state.user) {
@@ -1297,17 +1322,11 @@ const APP = {
   },
 
 
-  // ---------------------------------------------------------
+  // =========================================================
   // GLOBAL MACHINE STATUS
-  // ---------------------------------------------------------
+  // =========================================================
 
   getMachineStatus(machineId) {
-
-    /*
-     * IMPORTANT:
-     * This checks ALL bookings,
-     * not only current user's bookings.
-     */
 
     const now =
       this.now();
@@ -1338,11 +1357,6 @@ const APP = {
             return false;
           }
 
-
-          /*
-           * Ignore bookings that are
-           * completely in the past.
-           */
 
           if (
             b.endTime &&
@@ -1383,10 +1397,6 @@ const APP = {
   ) {
 
 
-    // -------------------------------------------------------
-    // USER CAN ONLY HAVE ONE ACTIVE BOOKING
-    // -------------------------------------------------------
-
     if (
       this.userActiveBookings().length > 0
     ) {
@@ -1398,10 +1408,6 @@ const APP = {
       return;
     }
 
-
-    // -------------------------------------------------------
-    // CHECK GLOBAL STATE
-    // -------------------------------------------------------
 
     const taken =
       this.state.bookings.find(
@@ -1431,10 +1437,6 @@ const APP = {
     }
 
 
-    // -------------------------------------------------------
-    // CREATE BOOKING
-    // -------------------------------------------------------
-
     const booking = {
 
       id:
@@ -1445,33 +1447,21 @@ const APP = {
           .toString(36)
           .slice(2, 6),
 
-      machineId:
+      machineId: machineId,
 
-        machineId,
-
-      startTime:
-
-        startTime,
+      startTime: startTime,
 
       endTime:
-
         startTime +
         this.SLOT_MS,
 
-      status:
+      status: 'booked',
 
-        'booked',
+      confirmationDeadline: null,
 
-      confirmationDeadline:
-
-        null,
-
-      createdAt:
-
-        this.now(),
+      createdAt: this.now(),
 
       token:
-
         'T-' +
         (
           Math.floor(
@@ -1480,10 +1470,6 @@ const APP = {
         )
     };
 
-
-    // -------------------------------------------------------
-    // LOCAL UPDATE FIRST
-    // -------------------------------------------------------
 
     this.state.bookings.unshift(
       {
@@ -1506,19 +1492,11 @@ const APP = {
     this.render();
 
 
-    // -------------------------------------------------------
-    // SUCCESS ANIMATION
-    // -------------------------------------------------------
-
     this.showBookingSuccess(
       booking,
       'booked'
     );
 
-
-    // -------------------------------------------------------
-    // FIRESTORE
-    // -------------------------------------------------------
 
     try {
 
@@ -1559,10 +1537,6 @@ const APP = {
   async walkIn(machineId) {
 
 
-    // -------------------------------------------------------
-    // ONE ACTIVE BOOKING
-    // -------------------------------------------------------
-
     if (
       this.userActiveBookings().length > 0
     ) {
@@ -1574,10 +1548,6 @@ const APP = {
       return;
     }
 
-
-    // -------------------------------------------------------
-    // MACHINE MUST BE FREE
-    // -------------------------------------------------------
 
     const status =
       this.getMachineStatus(
@@ -1612,33 +1582,21 @@ const APP = {
           .toString(36)
           .slice(2, 6),
 
-      machineId:
+      machineId: machineId,
 
-        machineId,
-
-      startTime:
-
-        start,
+      startTime: start,
 
       endTime:
-
         start +
         this.SLOT_MS,
 
-      status:
+      status: 'running',
 
-        'running',
+      confirmationDeadline: null,
 
-      confirmationDeadline:
-
-        null,
-
-      createdAt:
-
-        start,
+      createdAt: start,
 
       token:
-
         'T-' +
         (
           Math.floor(
@@ -1647,10 +1605,6 @@ const APP = {
         )
     };
 
-
-    // -------------------------------------------------------
-    // LOCAL STATE
-    // -------------------------------------------------------
 
     this.state.bookings.unshift(
       {
@@ -1673,19 +1627,11 @@ const APP = {
     this.render();
 
 
-    // -------------------------------------------------------
-    // SUCCESS
-    // -------------------------------------------------------
-
     this.showBookingSuccess(
       booking,
       'running'
     );
 
-
-    // -------------------------------------------------------
-    // FIRESTORE
-    // -------------------------------------------------------
 
     try {
 
@@ -1753,7 +1699,6 @@ const APP = {
     b.status =
       'confirmed';
 
-
     this.render();
 
 
@@ -1814,7 +1759,6 @@ const APP = {
     b.status =
       'cancelled';
 
-
     this.render();
 
 
@@ -1874,7 +1818,6 @@ const APP = {
     b.status =
       'completed';
 
-
     b.endTime =
       this.now();
 
@@ -1925,6 +1868,394 @@ const APP = {
     );
 
     this.render();
+  },
+
+
+  // =========================================================
+  // BOOKING INFO
+  // =========================================================
+
+  openBookingInfo(bookingId) {
+
+    const booking =
+      this.state.bookings.find(
+        b => b.id === bookingId
+      );
+
+    if (!booking) {
+      return;
+    }
+
+    // Do not show own booking details
+    if (
+      this.state.user &&
+      booking.userId === this.state.user.uid
+    ) {
+      return;
+    }
+
+    this.state.selectedBooking =
+      booking;
+
+
+    const backdrop =
+      document.getElementById(
+        'booking-info-backdrop'
+      );
+
+    if (!backdrop) {
+      return;
+    }
+
+
+    const nameEl =
+      document.getElementById(
+        'booking-info-name'
+      );
+
+    const roomEl =
+      document.getElementById(
+        'booking-info-room'
+      );
+
+    const contactEl =
+      document.getElementById(
+        'booking-info-contact'
+      );
+
+    const machineEl =
+      document.getElementById(
+        'booking-info-machine'
+      );
+
+    const timeEl =
+      document.getElementById(
+        'booking-info-time'
+      );
+
+    const callBtn =
+      document.querySelector(
+        '[data-call-booking]'
+      );
+
+
+    const username =
+      booking.username ||
+      'Unknown user';
+
+    const room =
+      this.extractRoomNumber(
+        username
+      );
+
+    const contact =
+      booking.userPhone ||
+      booking.phone ||
+      booking.contact ||
+      booking.userEmail ||
+      'Contact unavailable';
+
+
+    if (nameEl) {
+      nameEl.textContent =
+        this.extractPersonName(
+          username
+        );
+    }
+
+    if (roomEl) {
+      roomEl.textContent =
+        room || 'Not provided';
+    }
+
+    if (contactEl) {
+      contactEl.textContent =
+        contact;
+    }
+
+
+    const machine =
+      this.machines.find(
+        m =>
+          m.id ===
+          booking.machineId
+      );
+
+    if (machineEl) {
+      machineEl.textContent =
+        machine
+          ? `${machine.name} · Machine ${machine.code}`
+          : 'Machine';
+    }
+
+
+    if (timeEl) {
+      timeEl.textContent =
+        this.fmtSlot(
+          booking.startTime,
+          booking.endTime
+        );
+    }
+
+
+    if (callBtn) {
+
+      callBtn.dataset.callBooking =
+        booking.id;
+
+      const phone =
+        this.extractPhone(
+          contact
+        );
+
+      if (phone) {
+
+        callBtn.classList.remove(
+          'hidden'
+        );
+
+        callBtn.disabled = false;
+
+      } else {
+
+        callBtn.classList.add(
+          'hidden'
+        );
+      }
+    }
+
+
+    backdrop.classList.remove(
+      'hidden'
+    );
+  },
+
+
+  closeBookingInfo() {
+
+    const backdrop =
+      document.getElementById(
+        'booking-info-backdrop'
+      );
+
+    if (backdrop) {
+      backdrop.classList.add(
+        'hidden'
+      );
+    }
+
+    this.state.selectedBooking =
+      null;
+  },
+
+
+  extractRoomNumber(username) {
+
+    if (!username) {
+      return '';
+    }
+
+    const match =
+      String(username).match(
+        /^\s*(\d+)/
+      );
+
+    return match
+      ? match[1]
+      : '';
+  },
+
+
+  extractPersonName(username) {
+
+    if (!username) {
+      return 'Unknown user';
+    }
+
+    return String(username)
+      .replace(
+        /^\s*\d+\s*/,
+        ''
+      )
+      .trim() ||
+      'Unknown user';
+  },
+
+
+  extractPhone(contact) {
+
+    if (!contact) {
+      return '';
+    }
+
+    const value =
+      String(contact).trim();
+
+    if (
+      value.includes('@')
+    ) {
+      return '';
+    }
+
+    const phone =
+      value.replace(
+        /[^\d+]/g,
+        ''
+      );
+
+    if (
+      phone.length >= 10
+    ) {
+      return phone;
+    }
+
+    return '';
+  },
+
+
+  callBookingUser(booking) {
+
+    const contact =
+      booking.userPhone ||
+      booking.phone ||
+      booking.contact ||
+      '';
+
+
+    const phone =
+      this.extractPhone(
+        contact
+      );
+
+    if (!phone) {
+
+      this.toast(
+        'Phone number unavailable'
+      );
+
+      return;
+    }
+
+
+    window.location.href =
+      `tel:${phone}`;
+  },
+
+
+  // =========================================================
+  // COMPLETION REMINDER
+  // =========================================================
+
+  updateCompletionReminder() {
+
+    const banner =
+      document.getElementById(
+        'completion-banner'
+      );
+
+    if (!banner) {
+      return;
+    }
+
+
+    if (!this.state.user) {
+
+      banner.classList.add(
+        'hidden'
+      );
+
+      return;
+    }
+
+
+    const now =
+      this.now();
+
+
+    /*
+     * Find the current user's running booking
+     * that is within the final 5 minutes.
+     */
+
+    const booking =
+      this.state.bookings.find(
+        b => {
+
+          if (
+            b.userId !==
+            this.state.user.uid
+          ) {
+            return false;
+          }
+
+          if (
+            b.status !==
+            'running'
+          ) {
+            return false;
+          }
+
+          const remaining =
+            b.endTime - now;
+
+          return (
+            remaining > 0 &&
+            remaining <=
+              this.COMPLETION_REMINDER_MS
+          );
+        }
+      );
+
+
+    if (!booking) {
+
+      banner.classList.add(
+        'hidden'
+      );
+
+      return;
+    }
+
+
+    banner.classList.remove(
+      'hidden'
+    );
+
+
+    const machine =
+      this.machines.find(
+        m =>
+          m.id ===
+          booking.machineId
+      );
+
+
+    const detail =
+      document.getElementById(
+        'completion-detail'
+      );
+
+
+    if (detail) {
+
+      detail.textContent =
+        `${machine ? machine.name : 'Machine'} · finishes in ${this.fmtDur(
+          booking.endTime - now
+        )}`;
+    }
+
+
+    const title =
+      document.getElementById(
+        'completion-title'
+      );
+
+
+    if (title) {
+
+      title.textContent =
+        'Your washing cycle is almost complete';
+    }
   },
 
 
@@ -2083,7 +2414,7 @@ const APP = {
       ) {
 
         msgText.textContent =
-          `Running for 1 hour · ends at ${this.fmtTime(endDate)} · others see you on the dashboard`;
+          `Running for 1 hour 30 minutes · ends at ${this.fmtTime(endDate)} · others see you on the dashboard`;
 
         msgBox.classList.add(
           'running'
@@ -2338,18 +2669,7 @@ const APP = {
 
     this.updateClocks();
 
-
-    const dt =
-      document.getElementById(
-        'demo-toggle'
-      );
-
-
-    if (dt) {
-
-      dt.checked =
-        this.state.demoMode;
-    }
+    this.updateCompletionReminder();
   },
 
 
@@ -2462,6 +2782,8 @@ const APP = {
     this.renderMyBookings();
 
     this.updateAwaitingBanner();
+
+    this.updateCompletionReminder();
   },
 
 
@@ -2549,13 +2871,6 @@ const APP = {
       return;
     }
 
-
-    /*
-     * IMPORTANT:
-     * Even though state.bookings contains
-     * everybody's bookings, this function
-     * shows ONLY the current user's bookings.
-     */
 
     const mine =
       this.userActiveBookings();
@@ -3086,11 +3401,6 @@ const APP = {
         slotStart.getTime();
 
 
-      /*
-       * IMPORTANT:
-       * Search ALL bookings.
-       */
-
       const taken =
         this.state.bookings.find(
           b =>
@@ -3133,6 +3443,8 @@ const APP = {
       let sub = '';
 
       let disabled = '';
+
+      let bookingId = '';
 
 
       // -----------------------------------------------------
@@ -3178,6 +3490,9 @@ const APP = {
 
       else if (taken) {
 
+        bookingId =
+          taken.id;
+
 
         if (isMine) {
 
@@ -3217,9 +3532,11 @@ const APP = {
               'taken';
           }
 
-
-          disabled =
-            'disabled';
+          // IMPORTANT:
+          // Other users' booked slots are
+          // viewable so their contact details
+          // can be opened.
+          disabled = '';
         }
       }
 
@@ -3246,6 +3563,9 @@ const APP = {
           ${disabled}
           data-start="${startMs}"
           data-machine="${machineId}"
+          ${bookingId
+            ? `data-booking-id="${bookingId}"`
+            : ''}
         >
 
           <span class="time">
