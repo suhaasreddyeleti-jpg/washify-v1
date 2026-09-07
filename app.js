@@ -11,8 +11,8 @@
    - Machine availability visible to everyone
    - 15-minute confirmation
    - 5-minute confirmation window
-   - 90-minute machine cycle
-   - True 90-minute consecutive slot grid
+   - 60-minute machine cycle
+   - True 60-minute consecutive slot grid
    - Overlap protection
    - Taken-slot contact details
    - 5-minute pre-completion in-app reminder
@@ -72,17 +72,17 @@ const APP = {
     {
       id: 'a',
       code: 'A',
-      name: 'Iron Man'
+      name: 'washy 1'
     },
     {
       id: 'b',
       code: 'B',
-      name: 'Captain America'
+      name: 'washy 2'
     },
     {
       id: 'c',
       code: 'C',
-      name: 'Thor'
+      name: 'washy 3'
     }
   ],
 
@@ -91,8 +91,8 @@ const APP = {
   // TIME SETTINGS
   // =========================================================
 
-  // Every normal slot/cycle = 90 minutes
-  SLOT_MS: 90 * 60 * 1000,
+  // Every normal slot/cycle = 60 minutes
+  SLOT_MS: 60 * 60 * 1000,
 
   // Ask for confirmation 15 minutes before start
   CONFIRM_LEAD_MS: 15 * 60 * 1000,
@@ -3601,7 +3601,7 @@ const APP = {
 
 
   // =========================================================
-  // TRUE 90-MINUTE SLOT GENERATION
+  // TRUE 60-MINUTE SLOT GENERATION
   // =========================================================
 
   getDaySlots(date) {
@@ -3878,7 +3878,7 @@ const APP = {
 
           /*
            * Keep normal duration label.
-           * If the final slot is shorter than 90 minutes,
+           * If the final slot is shorter than 60 minutes,
            * the actual duration is shown automatically.
            */
           sub =
@@ -3963,10 +3963,10 @@ const APP = {
 
 
     if (
-      minutes === 90
+      minutes === 60
     ) {
 
-      return '90 MIN';
+      return '60 min';
     }
 
 
