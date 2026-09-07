@@ -11,8 +11,8 @@
    - Machine availability visible to everyone
    - 15-minute confirmation
    - 5-minute confirmation window
-   - 1-hour machine cycle
-   - True 1-hour consecutive slot grid
+   - 90-minute machine cycle
+   - True 90-minute consecutive slot grid
    - Overlap protection
    - Taken-slot contact details
    - 5-minute pre-completion in-app reminder
@@ -22,7 +22,7 @@
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDQj1VsF1M2LUZtbPamdO7wjWLVJueFb1c",
+  apiKey: "AIzaSyDQg1VsF1M2LUZtbPamdO7wjWLVJueFb1c",
   authDomain: "washify-a87ed.firebaseapp.com",
   projectId: "washify-a87ed",
   storageBucket: "washify-a87ed.firebasestorage.app",
@@ -72,17 +72,17 @@ const APP = {
     {
       id: 'a',
       code: 'A',
-      name: 'Washy 1'
+      name: 'Iron Man'
     },
     {
       id: 'b',
       code: 'B',
-      name: 'Washy 2'
+      name: 'Captain America'
     },
     {
       id: 'c',
       code: 'C',
-      name: 'Washy 3'
+      name: 'Thor'
     }
   ],
 
@@ -91,8 +91,8 @@ const APP = {
   // TIME SETTINGS
   // =========================================================
 
-  // Every normal slot/cycle = 1 hour
-  SLOT_MS: 60 * 60 * 1000,
+  // Every normal slot/cycle = 90 minutes
+  SLOT_MS: 90 * 60 * 1000,
 
   // Ask for confirmation 15 minutes before start
   CONFIRM_LEAD_MS: 15 * 60 * 1000,
@@ -3601,7 +3601,7 @@ const APP = {
 
 
   // =========================================================
-  // TRUE 1-HOUR SLOT GENERATION
+  // TRUE 90-MINUTE SLOT GENERATION
   // =========================================================
 
   getDaySlots(date) {
@@ -3878,7 +3878,7 @@ const APP = {
 
           /*
            * Keep normal duration label.
-           * If the final slot is shorter than 1 hour,
+           * If the final slot is shorter than 90 minutes,
            * the actual duration is shown automatically.
            */
           sub =
@@ -3963,10 +3963,10 @@ const APP = {
 
 
     if (
-      minutes === 60
+      minutes === 90
     ) {
 
-      return '1 HR';
+      return '90 MIN';
     }
 
 
@@ -4104,8 +4104,7 @@ const APP = {
 
 
     const m =
-      totalMin %
-      60;
+      totalMin % 60;
 
 
     return h > 0
@@ -4137,8 +4136,7 @@ const APP = {
 
 
     const m =
-      totalMin %
-      60;
+      totalMin % 60;
 
 
     if (
