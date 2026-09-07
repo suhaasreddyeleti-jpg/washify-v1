@@ -4,25 +4,33 @@
   --bg-tile: #ECEEF1;
   --bg-tile-line: rgba(0,0,0,0.04);
   --bg-surface: #FFFFFF;
+
   --ink-strong: #1A2733;
   --ink-default: #2C3E50;
   --ink-mute: #5D6D7E;
   --ink-faint: #95A5A6;
+
   --border-subtle: #DDE2E6;
   --border-default: #C2C9CD;
+
   --status-free: #1E8449;
   --status-free-bg: #D4EFDF;
   --status-free-tint: rgba(30,132,73,0.12);
+
   --status-running: #BA4A00;
   --status-running-bg: #FAE5D3;
   --status-running-tint: rgba(186,74,0,0.12);
+
   --status-booked: #9A7D0A;
   --status-booked-bg: #FCF3CF;
+
   --status-awaiting: #CA6F1E;
   --status-awaiting-bg: #FDEBD0;
   --status-awaiting-tint: rgba(202,111,30,0.18);
+
   --status-confirmed: #2471A3;
   --status-confirmed-bg: #D6EAF8;
+
   --status-danger: #922B21;
   --status-danger-bg: #FADBD8;
 
@@ -64,13 +72,19 @@
   --r-full: 9999px;
 }
 
+
+/* =========================
+   RESET
+========================= */
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -93,6 +107,11 @@ input {
   display: none !important;
 }
 
+
+/* =========================
+   BODY
+========================= */
+
 body {
   font-family: var(--font-body);
   font-size: 14px;
@@ -100,11 +119,20 @@ body {
   background: var(--bg-base);
 
   background-image:
-    linear-gradient(var(--bg-tile-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--bg-tile-line) 1px, transparent 1px);
+    linear-gradient(
+      var(--bg-tile-line) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      var(--bg-tile-line) 1px,
+      transparent 1px
+    );
 
   background-size: 28px 28px;
+
   min-height: 100vh;
+
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -113,10 +141,14 @@ body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
+
   background: var(--bg-tile);
+
   position: relative;
+
   display: flex;
   flex-direction: column;
+
   box-shadow:
     0 0 0 1px rgba(0,0,0,0.06),
     0 24px 60px rgba(0,0,0,0.10);
@@ -157,11 +189,15 @@ h2 {
 
 .section-eyebrow {
   display: block;
+
   font-family: var(--font-mono);
   font-size: 10px;
+
   letter-spacing: 2px;
   text-transform: uppercase;
+
   color: var(--ink-faint);
+
   margin-bottom: var(--s-1);
 }
 
@@ -170,6 +206,7 @@ h2 {
   color: var(--ink-strong);
 }
 
+
 /* =========================
    BRAND
 ========================= */
@@ -177,8 +214,11 @@ h2 {
 .brand-mark {
   width: 72px;
   height: 72px;
+
   border-radius: 50%;
+
   position: relative;
+
   background:
     radial-gradient(
       circle at 35% 25%,
@@ -186,10 +226,13 @@ h2 {
       #6B7682 60%,
       #3D454F 100%
     );
+
   border: 6px solid var(--steel-1);
+
   box-shadow:
     inset 0 4px 14px rgba(0,0,0,0.4),
     0 4px 12px rgba(0,0,0,0.15);
+
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -203,7 +246,9 @@ h2 {
 .brand-drum {
   position: absolute;
   inset: 8%;
+
   border-radius: 50%;
+
   background: var(--drum-1);
 }
 
@@ -213,35 +258,49 @@ h2 {
 
 .brand-drum::before {
   content: '';
+
   position: absolute;
   inset: 0;
+
   border-radius: 50%;
+
   background-image:
-    radial-gradient(circle 1.2px, transparent 1.2px);
+    radial-gradient(
+      circle 1.2px,
+      transparent 1.2px
+    );
+
   background-size: 7px 7px;
   background-position: 3.5px 3.5px;
+
   opacity: 0.7;
 }
 
 .brand-water {
   position: absolute;
+
   left: 12%;
   right: 12%;
   bottom: 10%;
+
   height: 30%;
+
   background:
     linear-gradient(
       180deg,
       rgba(133,193,233,0.4),
       rgba(84,153,199,0.9)
     );
+
   border-radius: 50%;
 }
 
 .brand-mark::before {
   content: '';
+
   position: absolute;
   inset: 0;
+
   background:
     radial-gradient(
       circle at 25% 20%,
@@ -253,9 +312,11 @@ h2 {
       rgba(0,0,0,0.25) 0%,
       transparent 35%
     );
+
   z-index: 10;
   pointer-events: none;
 }
+
 
 /* =========================
    LOGIN
@@ -269,11 +330,17 @@ h2 {
 
 .login-card {
   background: var(--bg-surface);
+
   border-radius: var(--r-lg);
+
   padding: var(--s-7) var(--s-5);
+
   width: 100%;
   max-width: 360px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.06);
+
   border: 1px solid var(--border-subtle);
 }
 
@@ -295,43 +362,63 @@ h2 {
 .brand-tag {
   font-family: var(--font-mono);
   font-size: 10px;
+
   color: var(--ink-mute);
+
   text-transform: uppercase;
   letter-spacing: 1.5px;
+
   margin-top: var(--s-1);
 }
 
 .login-hint {
   text-align: center;
+
   font-size: 12px;
   color: var(--ink-mute);
+
   margin-bottom: var(--s-4);
+
   font-family: var(--font-mono);
+
   letter-spacing: 0.3px;
   line-height: 1.5;
 }
 
 .google-btn {
   width: 100%;
+
   padding: var(--s-3) var(--s-4);
+
   background: white;
+
   border: 1.5px solid var(--border-default);
+
   border-radius: var(--r-sm);
+
   font-weight: 500;
   font-size: 14px;
+
   color: var(--ink-strong);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   gap: var(--s-3);
+
   transition: all 0.15s;
+
   margin-bottom: var(--s-3);
 }
 
 .google-btn:hover {
   background: var(--bg-tile);
+
   border-color: var(--ink-mute);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.06);
 }
 
 .google-btn:active {
@@ -343,6 +430,7 @@ h2 {
   cursor: not-allowed;
 }
 
+
 /* =========================
    MODAL
 ========================= */
@@ -350,30 +438,50 @@ h2 {
 .modal-backdrop {
   position: fixed;
   inset: 0;
+
   background: rgba(26, 39, 51, 0.55);
+
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+
   display: flex;
+
   align-items: center;
   justify-content: center;
+
   padding: var(--s-4);
+
   z-index: 200;
+
   animation: fadeIn 0.25s ease-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal {
   background: var(--bg-surface);
+
   border-radius: var(--r-lg);
+
   padding: var(--s-6);
+
   width: 100%;
   max-width: 380px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.3);
+
+  animation:
+    modalIn 0.35s
+    cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalIn {
@@ -400,18 +508,29 @@ h2 {
 
 .modal-head h3 {
   font-family: var(--font-display);
+
   font-weight: 700;
   font-size: 22px;
+
   color: var(--ink-strong);
+
   margin-bottom: 6px;
+
   letter-spacing: -0.3px;
 }
 
 .modal-head p {
   font-size: 13px;
+
   color: var(--ink-mute);
+
   line-height: 1.5;
 }
+
+
+/* =========================
+   FORM FIELDS
+========================= */
 
 .field {
   display: block;
@@ -420,31 +539,47 @@ h2 {
 
 .field-label {
   display: block;
+
   font-family: var(--font-mono);
   font-size: 10px;
+
   letter-spacing: 1.5px;
   text-transform: uppercase;
+
   color: var(--ink-mute);
+
   margin-bottom: var(--s-2);
+
   font-weight: 500;
 }
 
 .field input {
   width: 100%;
+
   padding: var(--s-3);
+
   background: var(--bg-tile);
+
   border: 1px solid var(--border-subtle);
+
   border-radius: var(--r-sm);
+
   font-size: 15px;
+
   font-family: var(--font-mono);
+
   color: var(--ink-strong);
+
   transition: all 0.15s;
 }
 
 .field input:focus {
   border-color: var(--status-confirmed);
+
   background: var(--bg-surface);
-  box-shadow: 0 0 0 3px var(--status-confirmed-bg);
+
+  box-shadow:
+    0 0 0 3px var(--status-confirmed-bg);
 }
 
 .field input::placeholder {
@@ -454,10 +589,15 @@ h2 {
 
 .field-hint {
   display: block;
+
   font-family: var(--font-mono);
   font-size: 10px;
+
   color: var(--ink-faint);
+
   margin-top: var(--s-1);
+
+  line-height: 1.4;
 }
 
 .field-hint strong {
@@ -466,13 +606,21 @@ h2 {
 
 .error-msg {
   background: var(--status-danger-bg);
+
   color: var(--status-danger);
+
   padding: var(--s-2) var(--s-3);
+
   border-radius: var(--r-sm);
+
   font-size: 12px;
+
   margin-bottom: var(--s-3);
+
   font-family: var(--font-mono);
+
   min-height: 18px;
+
   display: none;
 }
 
@@ -480,21 +628,30 @@ h2 {
   display: block;
 }
 
+
 /* =========================
    BUTTONS
 ========================= */
 
 .btn-primary {
   width: 100%;
+
   padding: var(--s-3) var(--s-4);
+
   background: var(--ink-strong);
+
   color: white;
+
   border-radius: var(--r-sm);
+
   font-weight: 600;
   font-size: 13px;
+
   text-transform: uppercase;
   letter-spacing: 1.5px;
+
   transition: background 0.15s;
+
   margin-top: var(--s-2);
 }
 
@@ -508,14 +665,19 @@ h2 {
 
 .btn-primary.sm {
   width: auto;
+
   padding: var(--s-2) var(--s-4);
+
   font-size: 11px;
 }
 
 .btn-primary.success-done {
   background: var(--status-free);
+
   height: 48px;
+
   font-size: 14px;
+
   margin-top: 0;
 }
 
@@ -525,14 +687,22 @@ h2 {
 
 .btn-ghost {
   padding: var(--s-2) var(--s-4);
+
   background: transparent;
+
   border: 1px solid var(--border-default);
+
   color: var(--ink-default);
+
   border-radius: var(--r-sm);
+
   font-size: 12px;
+
   font-weight: 500;
+
   text-transform: uppercase;
   letter-spacing: 1px;
+
   transition: all 0.15s;
 }
 
@@ -545,36 +715,58 @@ h2 {
   font-size: 11px;
 }
 
+
 /* =========================
    LOGIN FOOT
 ========================= */
 
 .login-foot {
   margin-top: var(--s-5);
+
   padding-top: var(--s-4);
+
   border-top: 1px solid var(--border-subtle);
+
   display: flex;
+
   align-items: center;
+
   gap: var(--s-2);
+
   font-family: var(--font-mono);
+
   font-size: 10px;
+
   color: var(--ink-faint);
+
   letter-spacing: 0.5px;
 }
 
 .status-dot {
   width: 6px;
   height: 6px;
+
   border-radius: 50%;
+
   background: var(--status-free);
-  box-shadow: 0 0 6px var(--status-free);
-  animation: blink 2s ease-in-out infinite;
+
+  box-shadow:
+    0 0 6px var(--status-free);
+
+  animation:
+    blink 2s ease-in-out infinite;
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
+
 
 /* =========================
    TOPBAR
@@ -582,19 +774,34 @@ h2 {
 
 .topbar {
   display: flex;
+
   align-items: center;
+
   padding: var(--s-4) var(--s-4);
-  padding-top: max(var(--s-4), env(safe-area-inset-top));
+
+  padding-top:
+    max(
+      var(--s-4),
+      env(safe-area-inset-top)
+    );
+
   background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-subtle);
+
+  border-bottom:
+    1px solid var(--border-subtle);
+
   gap: var(--s-3);
 }
 
 .topbar-left {
   display: flex;
+
   align-items: center;
+
   gap: var(--s-3);
+
   flex: 1;
+
   min-width: 0;
 }
 
@@ -610,20 +817,29 @@ h2 {
 
 .topbar-right {
   display: flex;
+
   align-items: center;
+
   gap: var(--s-3);
 }
 
 .back-btn {
   width: 38px;
   height: 38px;
+
   border-radius: var(--r-sm);
+
   background: var(--bg-tile);
+
   color: var(--ink-default);
+
   display: flex;
+
   align-items: center;
   justify-content: center;
+
   flex-shrink: 0;
+
   transition: background 0.15s;
 }
 
@@ -633,16 +849,27 @@ h2 {
 
 .clock {
   font-family: var(--font-mono);
+
   font-size: 12px;
+
   color: var(--led-text);
+
   background: var(--led-bg);
+
   padding: 5px var(--s-3);
+
   border-radius: var(--r-sm);
+
   letter-spacing: 1px;
+
   font-weight: 500;
+
   font-variant-numeric: tabular-nums;
-  box-shadow: inset 0 0 6px rgba(107,255,107,0.15);
+
+  box-shadow:
+    inset 0 0 6px rgba(107,255,107,0.15);
 }
+
 
 /* =========================
    CONFIRMATION BANNER
@@ -650,19 +877,30 @@ h2 {
 
 .awaiting-banner {
   background: var(--status-awaiting-bg);
-  border-bottom: 2px solid var(--status-awaiting);
+
+  border-bottom:
+    2px solid var(--status-awaiting);
+
   padding: var(--s-3) var(--s-4);
+
   display: flex;
+
   align-items: center;
+
   gap: var(--s-3);
+
   position: relative;
-  animation: slideDown 0.3s ease-out;
+
+  animation:
+    slideDown 0.3s ease-out;
 }
 
 .awaiting-banner::before {
   content: '';
+
   position: absolute;
   inset: 0;
+
   background:
     linear-gradient(
       90deg,
@@ -670,13 +908,21 @@ h2 {
       var(--status-awaiting-tint),
       transparent
     );
-  animation: shimmer 2.5s ease-in-out infinite;
+
+  animation:
+    shimmer 2.5s ease-in-out infinite;
+
   pointer-events: none;
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes slideDown {
@@ -694,75 +940,108 @@ h2 {
 .awaiting-pulse {
   width: 12px;
   height: 12px;
+
   border-radius: 50%;
+
   background: var(--status-awaiting);
-  animation: pulseDot 1.2s ease-in-out infinite;
+
+  animation:
+    pulseDot 1.2s ease-in-out infinite;
+
   flex-shrink: 0;
 }
 
 @keyframes pulseDot {
   0%, 100% {
-    box-shadow: 0 0 0 0 var(--status-awaiting-tint);
+    box-shadow:
+      0 0 0 0 var(--status-awaiting-tint);
   }
 
   50% {
-    box-shadow: 0 0 0 8px transparent;
+    box-shadow:
+      0 0 0 8px transparent;
   }
 }
 
 .awaiting-text {
   flex: 1;
+
   min-width: 0;
+
   position: relative;
+
   z-index: 1;
 }
 
 .awaiting-text strong {
   display: block;
+
   color: #6E2C00;
+
   font-size: 13px;
+
   font-weight: 700;
 }
 
 .awaiting-text p {
   font-family: var(--font-mono);
+
   font-size: 11px;
+
   color: #6E2C00;
+
   margin-top: 2px;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
+
   white-space: nowrap;
 }
 
 .awaiting-actions {
   display: flex;
+
   gap: var(--s-2);
+
   flex-shrink: 0;
+
   position: relative;
+
   z-index: 1;
 }
 
+
 /* =========================
-   COMPLETION REMINDER
-   Same in-app style as
-   confirmation banner.
+   CYCLE COMPLETION REMINDER
 ========================= */
 
-.completion-reminder {
+#cycle-reminder-banner {
   background: var(--status-running-bg);
-  border-bottom: 2px solid var(--status-running);
+
+  border-bottom:
+    2px solid var(--status-running);
+
   padding: var(--s-3) var(--s-4);
+
   display: flex;
+
   align-items: center;
+
   gap: var(--s-3);
+
   position: relative;
-  animation: slideDown 0.3s ease-out;
+
+  animation:
+    slideDown 0.3s ease-out;
 }
 
-.completion-reminder::before {
+#cycle-reminder-banner::before {
   content: '';
+
   position: absolute;
   inset: 0;
+
   background:
     linear-gradient(
       90deg,
@@ -770,40 +1049,47 @@ h2 {
       var(--status-running-tint),
       transparent
     );
-  animation: shimmer 2.5s ease-in-out infinite;
+
+  animation:
+    shimmer 2.5s ease-in-out infinite;
+
   pointer-events: none;
 }
 
-.completion-reminder .reminder-pulse {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+#cycle-reminder-banner .awaiting-pulse {
   background: var(--status-running);
-  animation: pulseDot 1.2s ease-in-out infinite;
-  flex-shrink: 0;
+
+  animation:
+    pulseRunning 1.2s ease-in-out infinite;
 }
 
-.completion-reminder .reminder-text {
+@keyframes pulseRunning {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 var(--status-running-tint);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 8px transparent;
+  }
+}
+
+#cycle-reminder-banner .awaiting-text {
   flex: 1;
   min-width: 0;
-  position: relative;
-  z-index: 1;
 }
 
-.completion-reminder .reminder-text strong {
-  display: block;
+#cycle-reminder-banner .awaiting-text strong {
   color: #7E3300;
-  font-size: 13px;
-  font-weight: 700;
 }
 
-.completion-reminder .reminder-text p {
-  font-family: var(--font-mono);
-  font-size: 11px;
+#cycle-reminder-banner .awaiting-text p {
   color: #7E3300;
-  margin-top: 2px;
   line-height: 1.4;
+  white-space: normal;
 }
+
 
 /* =========================
    MACHINE GRID
@@ -811,26 +1097,42 @@ h2 {
 
 .machine-grid {
   display: flex;
+
   flex-direction: column;
+
   gap: var(--s-3);
 }
 
 .machine-card {
   background: var(--bg-surface);
+
   border-radius: var(--r-lg);
+
   padding: var(--s-4);
+
   display: flex;
+
   gap: var(--s-4);
+
   align-items: center;
-  border: 1px solid var(--border-subtle);
+
+  border:
+    1px solid var(--border-subtle);
+
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
 }
 
 .machine-card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+
+  box-shadow:
+    0 6px 16px rgba(0,0,0,0.06);
 }
+
 
 /* =========================
    MACHINE PORTHOLE
@@ -839,8 +1141,11 @@ h2 {
 .porthole {
   width: 110px;
   height: 110px;
+
   border-radius: 50%;
+
   position: relative;
+
   flex-shrink: 0;
 
   background:
@@ -863,13 +1168,16 @@ h2 {
 .porthole.lg {
   width: 150px;
   height: 150px;
+
   border-width: 9px;
 }
 
 .porthole::before {
   content: '';
+
   position: absolute;
   inset: 0;
+
   background:
     radial-gradient(
       circle at 22% 18%,
@@ -881,28 +1189,40 @@ h2 {
       rgba(0,0,0,0.30) 0%,
       transparent 35%
     );
+
   z-index: 12;
+
   pointer-events: none;
 }
 
 .porthole::after {
   content: '';
+
   position: absolute;
+
   inset: -4px;
+
   border-radius: 50%;
+
   border: 3px solid transparent;
+
   z-index: -1;
 }
 
 .porthole .drum {
   position: absolute;
+
   inset: 12px;
+
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    var(--drum-1),
-    var(--drum-2)
-  );
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--drum-1),
+      var(--drum-2)
+    );
+
   z-index: 5;
 }
 
@@ -912,51 +1232,79 @@ h2 {
 
 .drum::before {
   content: '';
+
   position: absolute;
+
   inset: 0;
+
   border-radius: 50%;
+
   background-image:
-    radial-gradient(circle 1.2px, transparent 1.2px);
+    radial-gradient(
+      circle 1.2px,
+      transparent 1.2px
+    );
+
   background-size: 7px 7px;
-  background-position: 3.5px 3.5px;
+
+  background-position:
+    3.5px 3.5px;
+
   opacity: 0.55;
 }
 
 .drum::after {
   content: '';
+
   position: absolute;
+
   inset: 30%;
+
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    #0A0F14,
-    #1A2028
-  );
-  box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
+
+  background:
+    radial-gradient(
+      circle,
+      #0A0F14,
+      #1A2028
+    );
+
+  box-shadow:
+    inset 0 0 8px rgba(0,0,0,0.6);
 }
 
 .porthole .water {
   position: absolute;
+
   left: 14%;
   right: 14%;
   bottom: 10%;
+
   height: 30%;
+
   background:
     linear-gradient(
       180deg,
       rgba(133,193,233,0.3),
       rgba(84,153,199,0.85)
     );
+
   border-radius: 50%;
+
   z-index: 7;
+
   transition: background 0.6s;
 }
 
 .porthole .water::before {
   content: '';
+
   position: absolute;
+
   inset: 0;
+
   border-radius: 50%;
+
   background:
     radial-gradient(
       ellipse at top,
@@ -966,7 +1314,8 @@ h2 {
 }
 
 .porthole.free .water {
-  animation: ripple 5s ease-in-out infinite;
+  animation:
+    ripple 5s ease-in-out infinite;
 }
 
 .porthole.free::after {
@@ -997,7 +1346,9 @@ h2 {
 
 .porthole.awaiting::after {
   border-color: var(--status-awaiting);
-  animation: pulseRing 1.4s ease-in-out infinite;
+
+  animation:
+    pulseRing 1.4s ease-in-out infinite;
 }
 
 @keyframes pulseRing {
@@ -1013,7 +1364,8 @@ h2 {
 }
 
 .porthole.running .drum {
-  animation: spinDrum 1.6s linear infinite;
+  animation:
+    spinDrum 1.6s linear infinite;
 }
 
 .porthole.running .water {
@@ -1023,7 +1375,9 @@ h2 {
       rgba(186,74,0,0.4),
       rgba(135,54,0,0.95)
     );
-  animation: slosh 0.7s ease-in-out infinite alternate;
+
+  animation:
+    slosh 0.7s ease-in-out infinite alternate;
 }
 
 .porthole.running::after {
@@ -1038,25 +1392,38 @@ h2 {
 
 @keyframes slosh {
   from {
-    transform: translateX(-7px) skewX(-4deg);
-    border-radius: 45% 55% 50% 50%;
+    transform:
+      translateX(-7px)
+      skewX(-4deg);
+
+    border-radius:
+      45% 55% 50% 50%;
   }
 
   to {
-    transform: translateX(7px) skewX(4deg);
-    border-radius: 55% 45% 50% 50%;
+    transform:
+      translateX(7px)
+      skewX(4deg);
+
+    border-radius:
+      55% 45% 50% 50%;
   }
 }
 
 @keyframes ripple {
   0%, 100% {
-    transform: translateY(0) scaleY(1);
+    transform:
+      translateY(0)
+      scaleY(1);
   }
 
   50% {
-    transform: translateY(-2px) scaleY(1.05);
+    transform:
+      translateY(-2px)
+      scaleY(1.05);
   }
 }
+
 
 /* =========================
    MACHINE INFO
@@ -1069,37 +1436,56 @@ h2 {
 
 .machine-letter {
   font-family: var(--font-mono);
+
   font-size: 9px;
+
   letter-spacing: 2px;
+
   color: var(--ink-faint);
+
   margin-bottom: 2px;
+
   text-transform: uppercase;
 }
 
 .machine-name {
   font-family: var(--font-display);
+
   font-weight: 700;
+
   font-size: 17px;
+
   color: var(--ink-strong);
+
   letter-spacing: -0.2px;
 }
 
 .machine-status-row {
   font-family: var(--font-mono);
+
   font-size: 10px;
+
   text-transform: uppercase;
+
   letter-spacing: 1.2px;
+
   margin: var(--s-2) 0;
+
   font-weight: 600;
+
   display: flex;
+
   align-items: center;
+
   gap: var(--s-2);
 }
 
 .machine-status-row .dot {
   width: 8px;
   height: 8px;
+
   border-radius: 50%;
+
   flex-shrink: 0;
 }
 
@@ -1109,7 +1495,9 @@ h2 {
 
 .machine-status-row.free .dot {
   background: var(--status-free);
-  box-shadow: 0 0 6px var(--status-free);
+
+  box-shadow:
+    0 0 6px var(--status-free);
 }
 
 .machine-status-row.running {
@@ -1118,7 +1506,9 @@ h2 {
 
 .machine-status-row.running .dot {
   background: var(--status-running);
-  animation: blink 1s ease-in-out infinite;
+
+  animation:
+    blink 1s ease-in-out infinite;
 }
 
 .machine-status-row.booked {
@@ -1135,7 +1525,9 @@ h2 {
 
 .machine-status-row.awaiting .dot {
   background: var(--status-awaiting);
-  animation: blink 0.8s ease-in-out infinite;
+
+  animation:
+    blink 0.8s ease-in-out infinite;
 }
 
 .machine-status-row.confirmed {
@@ -1148,27 +1540,43 @@ h2 {
 
 .machine-meta {
   font-family: var(--font-mono);
+
   font-size: 11px;
+
   color: var(--ink-mute);
+
   line-height: 1.4;
 }
 
 .machine-meta strong {
   color: var(--ink-default);
+
   font-weight: 600;
 }
 
 .machine-cta {
   background: var(--ink-strong);
+
   color: white;
-  padding: var(--s-2) var(--s-4);
+
+  padding:
+    var(--s-2)
+    var(--s-4);
+
   border-radius: var(--r-sm);
+
   font-size: 11px;
+
   font-weight: 700;
+
   text-transform: uppercase;
+
   letter-spacing: 1.2px;
+
   white-space: nowrap;
+
   transition: all 0.15s;
+
   flex-shrink: 0;
 }
 
@@ -1182,7 +1590,9 @@ h2 {
 
 .machine-cta:disabled {
   background: var(--bg-tile);
+
   color: var(--ink-faint);
+
   cursor: not-allowed;
 }
 
@@ -1210,23 +1620,35 @@ h2 {
   background: #1A5A85;
 }
 
+
 /* =========================
    BOOKINGS
 ========================= */
 
 .bookings-list {
   display: flex;
+
   flex-direction: column;
+
   gap: var(--s-2);
 }
 
 .booking-row {
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+
+  border:
+    1px solid var(--border-subtle);
+
   border-radius: var(--r-md);
-  padding: var(--s-3) var(--s-4);
+
+  padding:
+    var(--s-3)
+    var(--s-4);
+
   display: flex;
+
   align-items: center;
+
   gap: var(--s-3);
 }
 
@@ -1237,25 +1659,37 @@ h2 {
 
 .booking-row .label {
   font-family: var(--font-mono);
+
   font-size: 9px;
+
   letter-spacing: 1.5px;
+
   color: var(--ink-mute);
+
   text-transform: uppercase;
+
   font-weight: 600;
 }
 
 .booking-row .machine-label {
   font-family: var(--font-display);
+
   font-weight: 600;
+
   font-size: 15px;
+
   color: var(--ink-strong);
+
   margin-top: 2px;
 }
 
 .booking-row .time {
   font-family: var(--font-mono);
+
   font-size: 11px;
+
   color: var(--ink-mute);
+
   margin-top: 2px;
 }
 
@@ -1265,143 +1699,152 @@ h2 {
 
 .booking-row .btn-cancel {
   font-size: 10px;
-  padding: 5px var(--s-3);
-  border: 1px solid var(--border-default);
+
+  padding:
+    5px
+    var(--s-3);
+
+  border:
+    1px solid var(--border-default);
+
   border-radius: var(--r-sm);
+
   color: var(--ink-default);
+
   background: transparent;
+
   text-transform: uppercase;
+
   letter-spacing: 1.2px;
+
   font-weight: 600;
+
   transition: all 0.15s;
 }
 
 .booking-row .btn-cancel:hover {
   background: var(--status-danger-bg);
+
   color: var(--status-danger);
+
   border-color: var(--status-danger);
 }
 
 .booking-row .btn-done {
   font-size: 10px;
-  padding: 5px var(--s-3);
-  border: 1px solid var(--status-confirmed);
+
+  padding:
+    5px
+    var(--s-3);
+
+  border:
+    1px solid var(--status-confirmed);
+
   border-radius: var(--r-sm);
+
   color: var(--status-confirmed);
+
   background: transparent;
+
   text-transform: uppercase;
+
   letter-spacing: 1.2px;
+
   font-weight: 600;
 }
 
 .empty-bookings {
   text-align: center;
+
   padding: var(--s-6);
+
   color: var(--ink-mute);
+
   font-size: 12px;
+
   background: var(--bg-surface);
-  border: 1px dashed var(--border-default);
+
+  border:
+    1px dashed var(--border-default);
+
   border-radius: var(--r-md);
+
   font-family: var(--font-mono);
+
   letter-spacing: 0.5px;
 }
 
 .logout-row {
   margin-top: var(--s-6);
+
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
+
   padding-top: var(--s-4);
-  border-top: 1px solid var(--border-subtle);
+
+  border-top:
+    1px solid var(--border-subtle);
 }
 
 .user-chip {
   font-family: var(--font-mono);
+
   font-size: 11px;
+
   color: var(--ink-mute);
+
   letter-spacing: 0.5px;
 }
 
 .user-chip strong {
   color: var(--ink-default);
+
   font-weight: 600;
 }
+
 
 /* =========================
-   BOOKED PERSON DETAILS
+   TAKEN SLOT DETAILS
 ========================= */
 
-.booking-person-card {
-  margin-top: var(--s-3);
-  background: var(--status-booked-bg);
-  border: 1px solid rgba(154,125,10,0.25);
-  border-radius: var(--r-md);
-  padding: var(--s-4);
-  animation: modalIn 0.2s ease-out;
+#previous-user-modal {
+  z-index: 250;
 }
 
-.booking-person-card .person-title {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--ink-mute);
-  font-weight: 600;
-  margin-bottom: var(--s-3);
+#previous-user-modal .modal {
+  max-width: 380px;
 }
 
-.booking-person-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-3);
-  padding: var(--s-2) 0;
-  border-bottom: 1px solid rgba(154,125,10,0.15);
+#previous-user-modal .success-details {
+  margin-bottom: var(--s-4);
 }
 
-.booking-person-row:last-child {
-  border-bottom: none;
+#previous-user-modal .success-row {
+  min-height: 42px;
 }
 
-.booking-person-key {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.booking-person-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-strong);
-  text-align: right;
+#previous-user-modal .success-val {
+  max-width: 65%;
   word-break: break-word;
 }
 
-.contact-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: var(--s-3);
-  width: 100%;
-  padding: var(--s-2) var(--s-3);
-  background: var(--ink-strong);
-  color: white;
-  border-radius: var(--r-sm);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-decoration: none;
-  transition: background 0.15s;
+#previous-user-actions {
+  align-items: stretch;
 }
 
-.contact-btn:hover {
-  background: #34495E;
+#previous-user-actions .btn-primary,
+#previous-user-actions .btn-ghost {
+  text-decoration: none;
+  text-align: center;
 }
+
+#previous-user-actions .btn-primary {
+  margin-top: 0;
+}
+
 
 /* =========================
    MACHINE DETAIL
@@ -1409,11 +1852,18 @@ h2 {
 
 .machine-hero {
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+
+  border:
+    1px solid var(--border-subtle);
+
   border-radius: var(--r-lg);
+
   padding: var(--s-5);
+
   display: flex;
+
   align-items: center;
+
   gap: var(--s-5);
 }
 
@@ -1421,102 +1871,168 @@ h2 {
   flex: 1;
 }
 
+
 /* =========================
    LEGEND
 ========================= */
 
 .legend {
   display: flex;
+
   flex-wrap: wrap;
+
   gap: var(--s-3);
-  padding: var(--s-3) var(--s-4);
+
+  padding:
+    var(--s-3)
+    var(--s-4);
+
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+
+  border:
+    1px solid var(--border-subtle);
+
   border-radius: var(--r-md);
+
   margin-bottom: var(--s-4);
 }
 
 .legend-item {
   display: flex;
+
   align-items: center;
+
   gap: var(--s-2);
+
   font-family: var(--font-mono);
+
   font-size: 10px;
+
   color: var(--ink-mute);
+
   letter-spacing: 1px;
+
   text-transform: uppercase;
 }
 
 .legend-swatch {
   width: 12px;
   height: 12px;
+
   border-radius: 3px;
+
   border: 1px solid;
 }
 
 .legend-swatch.free {
   background: var(--status-free-bg);
-  border-color: rgba(30,132,73,0.4);
+
+  border-color:
+    rgba(30,132,73,0.4);
 }
 
 .legend-swatch.mine {
   background: var(--status-confirmed-bg);
-  border-color: var(--status-confirmed);
+
+  border-color:
+    var(--status-confirmed);
 }
 
 .legend-swatch.taken {
   background: var(--status-booked-bg);
-  border-color: rgba(154,125,10,0.4);
+
+  border-color:
+    rgba(154,125,10,0.4);
 }
 
 .legend-swatch.past {
   background: var(--bg-tile);
-  border-color: var(--border-subtle);
+
+  border-color:
+    var(--border-subtle);
 }
 
+
 /* =========================
-   SLOTS
+   90-MINUTE SLOTS
 ========================= */
 
 .slot-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(92px, 1fr)
+    );
+
   gap: var(--s-2);
 }
 
 .slot {
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+
+  border:
+    1px solid var(--border-subtle);
+
   border-radius: var(--r-sm);
-  padding: var(--s-2) var(--s-1);
+
+  padding:
+    var(--s-3)
+    var(--s-1);
+
+  min-height: 58px;
+
   text-align: center;
+
   cursor: pointer;
+
   transition: all 0.12s;
+
   display: flex;
+
   flex-direction: column;
-  gap: 1px;
+
+  justify-content: center;
+
+  gap: 2px;
+
   font-family: var(--font-mono);
+
   position: relative;
+
+  user-select: none;
 }
 
 .slot .time {
-  font-size: 12px;
+  font-size: 11px;
+
   color: var(--ink-strong);
+
   font-weight: 600;
-  letter-spacing: 0.3px;
+
+  letter-spacing: 0.2px;
+
+  line-height: 1.3;
 }
 
 .slot .sub {
   font-size: 8px;
+
   color: var(--ink-mute);
+
   text-transform: uppercase;
+
   letter-spacing: 1px;
+
   font-weight: 600;
 }
 
 .slot.free:hover {
   border-color: var(--status-confirmed);
+
   background: var(--status-confirmed-bg);
+
   transform: translateY(-1px);
 }
 
@@ -1524,51 +2040,111 @@ h2 {
   transform: translateY(0);
 }
 
+
+/* USER'S OWN BOOKING */
+
 .slot.mine {
   background: var(--status-confirmed-bg);
+
   border-color: var(--status-confirmed);
-  cursor: default;
+
+  cursor: pointer;
 }
 
 .slot.mine::after {
   content: 'YOU';
+
   position: absolute;
+
   top: 2px;
   right: 4px;
+
   font-size: 7px;
+
   font-weight: 700;
+
   color: var(--status-confirmed);
+
   letter-spacing: 1px;
 }
 
+
+/* TAKEN SLOT */
+
 .slot.taken {
   background: var(--status-booked-bg);
-  border-color: rgba(154,125,10,0.3);
+
+  border-color:
+    rgba(154,125,10,0.3);
+
   cursor: pointer;
-  opacity: 0.85;
+
+  opacity: 0.9;
+}
+
+.slot.taken:hover {
+  border-color: var(--status-booked);
+
+  background:
+    #F8EFC1;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 3px 10px rgba(154,125,10,0.12);
+}
+
+.slot.taken:active {
+  transform: translateY(0);
 }
 
 .slot.taken .time {
   color: var(--ink-mute);
 }
 
+
+/* RUNNING SLOT */
+
+.slot.running {
+  background: var(--status-running-bg);
+
+  border-color:
+    rgba(186,74,0,0.4);
+
+  cursor: pointer;
+}
+
+.slot.running:hover {
+  border-color: var(--status-running);
+
+  transform: translateY(-1px);
+}
+
+.slot.running .time {
+  color: var(--status-running);
+}
+
+
+/* PAST SLOT */
+
 .slot.past {
   background: transparent;
+
   border-color: var(--border-subtle);
+
   opacity: 0.4;
+
   cursor: not-allowed;
+
+  pointer-events: none;
 }
 
 .slot.past .time {
   color: var(--ink-faint);
+
   text-decoration: line-through;
 }
 
-.slot.running {
-  background: var(--status-running-bg);
-  border-color: rgba(186,74,0,0.4);
-  cursor: pointer;
-}
 
 /* =========================
    TOAST
@@ -1576,33 +2152,57 @@ h2 {
 
 .toast {
   position: fixed;
+
   bottom: var(--s-6);
+
   left: 50%;
+
   transform: translateX(-50%);
+
   background: var(--ink-strong);
+
   color: white;
-  padding: var(--s-3) var(--s-5);
+
+  padding:
+    var(--s-3)
+    var(--s-5);
+
   border-radius: var(--r-md);
+
   font-size: 13px;
+
   font-weight: 500;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.25);
+
   z-index: 100;
+
   max-width: 90%;
+
   text-align: center;
-  animation: toastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  animation:
+    toastIn 0.25s
+    cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes toastIn {
   from {
-    transform: translate(-50%, 20px);
+    transform:
+      translate(-50%, 20px);
+
     opacity: 0;
   }
 
   to {
-    transform: translate(-50%, 0);
+    transform:
+      translate(-50%, 0);
+
     opacity: 1;
   }
 }
+
 
 /* =========================
    BOOKING SUCCESS
@@ -1610,37 +2210,66 @@ h2 {
 
 .success-overlay {
   position: fixed;
+
   inset: 0;
-  background: rgba(26, 39, 51, 0.92);
+
+  background:
+    rgba(26, 39, 51, 0.92);
+
   backdrop-filter: blur(12px);
+
   -webkit-backdrop-filter: blur(12px);
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   padding: var(--s-4);
+
   z-index: 300;
-  animation: fadeIn 0.3s ease-out;
+
+  animation:
+    fadeIn 0.3s ease-out;
 }
 
 .confetti-canvas {
   position: absolute;
+
   inset: 0;
+
   width: 100%;
   height: 100%;
+
   pointer-events: none;
 }
 
 .success-content {
   background: var(--bg-surface);
+
   border-radius: var(--r-xl);
-  padding: var(--s-7) var(--s-6);
+
+  padding:
+    var(--s-7)
+    var(--s-6);
+
   width: 100%;
+
   max-width: 400px;
+
   text-align: center;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.5);
+
   position: relative;
+
   z-index: 1;
-  animation: successPop 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+
+  animation:
+    successPop 0.55s
+    cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes successPop {
@@ -1662,22 +2291,37 @@ h2 {
 .success-check {
   width: 96px;
   height: 96px;
-  margin: 0 auto var(--s-4);
+
+  margin:
+    0 auto
+    var(--s-4);
+
   background: #E8F8EE;
+
   border-radius: 50%;
+
   display: flex;
+
   align-items: center;
   justify-content: center;
+
   position: relative;
 }
 
 .success-check::before {
   content: '';
+
   position: absolute;
+
   inset: -8px;
+
   border-radius: 50%;
-  background: rgba(30, 132, 73, 0.12);
-  animation: rippleOut 1.6s ease-out infinite;
+
+  background:
+    rgba(30, 132, 73, 0.12);
+
+  animation:
+    rippleOut 1.6s ease-out infinite;
 }
 
 @keyframes rippleOut {
@@ -1694,9 +2338,12 @@ h2 {
 
 .success-check-circle {
   stroke-dasharray: 166;
+
   stroke-dashoffset: 166;
+
   animation:
-    circleIn 0.6s 0.1s cubic-bezier(0.65, 0, 0.45, 1)
+    circleIn 0.6s 0.1s
+    cubic-bezier(0.65, 0, 0.45, 1)
     forwards;
 }
 
@@ -1708,9 +2355,12 @@ h2 {
 
 .success-check-tick {
   stroke-dasharray: 50;
+
   stroke-dashoffset: 50;
+
   animation:
-    tickIn 0.35s 0.55s cubic-bezier(0.65, 0, 0.45, 1)
+    tickIn 0.35s 0.55s
+    cubic-bezier(0.65, 0, 0.45, 1)
     forwards;
 }
 
@@ -1722,28 +2372,43 @@ h2 {
 
 #success-headline {
   font-family: var(--font-display);
+
   font-weight: 700;
+
   font-size: 26px;
+
   color: var(--ink-strong);
+
   letter-spacing: -0.5px;
+
   margin-bottom: var(--s-5);
 }
 
 .success-details {
   background: var(--bg-tile);
+
   border-radius: var(--r-md);
+
   padding: var(--s-4);
+
   margin-bottom: var(--s-4);
+
   text-align: left;
 }
 
 .success-row {
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
   padding: var(--s-2) 0;
+
   font-size: 13px;
-  border-bottom: 1px solid var(--border-subtle);
+
+  border-bottom:
+    1px solid var(--border-subtle);
 }
 
 .success-row:last-child {
@@ -1752,38 +2417,115 @@ h2 {
 
 .success-key {
   font-family: var(--font-mono);
+
   font-size: 10px;
+
   text-transform: uppercase;
+
   letter-spacing: 1.5px;
+
   color: var(--ink-mute);
+
   font-weight: 500;
 }
 
 .success-val {
   font-weight: 600;
+
   color: var(--ink-strong);
+
   text-align: right;
 }
 
 .success-val.mono {
   font-family: var(--font-mono);
+
   font-size: 11px;
 }
 
 .success-msg {
   background: var(--status-awaiting-bg);
+
   color: #6E2C00;
-  padding: var(--s-3) var(--s-4);
+
+  padding:
+    var(--s-3)
+    var(--s-4);
+
   border-radius: var(--r-sm);
+
   font-size: 12px;
+
   margin-bottom: var(--s-5);
+
   font-family: var(--font-mono);
+
   letter-spacing: 0.3px;
-  border-left: 3px solid var(--status-awaiting);
+
+  border-left:
+    3px solid var(--status-awaiting);
+
   text-align: left;
 }
 
 .success-msg.running {
   background: var(--status-running-bg);
-  border-left-color: var(--status-running);
+
+  border-left-color:
+    var(--status-running);
+}
+
+
+/* =========================
+   MOBILE ADJUSTMENTS
+========================= */
+
+@media (max-width: 380px) {
+
+  .machine-card {
+    gap: var(--s-3);
+    padding: var(--s-3);
+  }
+
+  .porthole {
+    width: 90px;
+    height: 90px;
+    border-width: 6px;
+  }
+
+  .porthole .drum {
+    inset: 10px;
+  }
+
+  .machine-name {
+    font-size: 15px;
+  }
+
+  .machine-cta {
+    padding:
+      var(--s-2)
+      var(--s-3);
+
+    font-size: 10px;
+  }
+
+  .slot-grid {
+    grid-template-columns:
+      repeat(
+        auto-fill,
+        minmax(82px, 1fr)
+      );
+  }
+
+  .slot {
+    min-height: 56px;
+  }
+
+  .slot .time {
+    font-size: 10px;
+  }
+
+  .modal {
+    padding: var(--s-5);
+  }
 }

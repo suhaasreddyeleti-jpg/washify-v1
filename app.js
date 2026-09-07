@@ -3,7 +3,7 @@
 
    Features:
    - Google OAuth
-   - Permanent username stored in Firestore
+   - Permanent username + phone stored in Firestore
    - Firestore bookings
    - GLOBAL real-time booking visibility
    - Users can only manage their own bookings
@@ -12,11 +12,14 @@
    - 15-minute confirmation
    - 5-minute confirmation window
    - 90-minute machine cycle
+   - True 90-minute consecutive slot grid
+   - Overlap protection
+   - Taken-slot contact details
    - 5-minute pre-completion in-app reminder
-   - Booking contact details on booked slots
    - Booking success animation
    - Cross-device synchronization
    ============================================================ */
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDQg1VsF1M2LUZtbPamdO7wjWLVJueFb1c",
@@ -26,6 +29,7 @@ const firebaseConfig = {
   messagingSenderId: "84813198828",
   appId: "1:84813198828:web:e1eaaf5214507e54297cc9"
 };
+
 
 firebase.initializeApp(firebaseConfig);
 
@@ -54,8 +58,9 @@ const APP = {
 
     bookingUnsubscribe: null,
 
-    // Booking/contact details currently being viewed
-    selectedBooking: null
+    selectedBooking: null,
+
+    reminderDismissedBookingId: null
   },
 
 
@@ -86,16 +91,16 @@ const APP = {
   // TIME SETTINGS
   // =========================================================
 
-  // 90 minutes = 1.5 hours
+  // Every normal slot/cycle = 90 minutes
   SLOT_MS: 90 * 60 * 1000,
 
-  // 15 minutes before booking
+  // Ask for confirmation 15 minutes before start
   CONFIRM_LEAD_MS: 15 * 60 * 1000,
 
-  // 5 minute confirmation window
+  // Confirmation must happen within final 5 minutes
   CONFIRM_WINDOW_MS: 5 * 60 * 1000,
 
-  // 5 minutes before machine completion
+  // Reminder starts 5 minutes before completion
   COMPLETION_REMINDER_MS: 5 * 60 * 1000,
 
 
@@ -120,9 +125,16 @@ const APP = {
 
         await this.loadProfile(user.uid);
 
+
+        /*
+         * Existing users without a phone number must
+         * complete the profile again so their contact
+         * number can be stored.
+         */
         if (
           this.state.profile &&
-          this.state.profile.username
+          this.state.profile.username &&
+          this.state.profile.phone
         ) {
 
           await this.afterLogin();
@@ -145,6 +157,7 @@ const APP = {
 
         this.state.selectedMachine = null;
         this.state.selectedBooking = null;
+        this.state.reminderDismissedBookingId = null;
 
         this.showView('login');
       }
@@ -172,36 +185,57 @@ const APP = {
 
     } catch (e) {
 
-      console.error('Profile load failed:', e);
+      console.error(
+        'Profile load failed:',
+        e
+      );
 
       this.state.profile = null;
     }
   },
 
 
-  async saveUsername(username) {
+  async saveUsername(username, phone) {
 
     if (!this.state.user) {
       throw new Error('Not authenticated');
     }
 
+
     const uid = this.state.user.uid;
 
-    const profile = {
+    const payload = {
       username: username,
       email: this.state.user.email || '',
-      createdAt:
-        firebase.firestore.FieldValue.serverTimestamp()
+      phone: phone
     };
+
+
+    /*
+     * Do not overwrite the original createdAt
+     * every time an existing profile is edited.
+     */
+    if (
+      !this.state.profile ||
+      !this.state.profile.createdAt
+    ) {
+
+      payload.createdAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+    }
+
 
     await db
       .collection('users')
       .doc(uid)
-      .set(profile, { merge: true });
+      .set(payload, {
+        merge: true
+      });
+
 
     this.state.profile = {
       ...(this.state.profile || {}),
-      ...profile
+      ...payload
     };
   },
 
@@ -235,11 +269,13 @@ const APP = {
 
       });
 
+
       this.state.bookings = all.sort(
         (a, b) =>
-          (b.createdAt || 0) -
-          (a.createdAt || 0)
+          this.timestampValue(b.createdAt) -
+          this.timestampValue(a.createdAt)
       );
+
 
       this.render();
 
@@ -271,7 +307,9 @@ const APP = {
       throw new Error('Not authenticated');
     }
 
+
     const { id, ...data } = booking;
+
 
     await db
       .collection('bookings')
@@ -280,7 +318,8 @@ const APP = {
 
         ...data,
 
-        userId: this.state.user.uid,
+        userId:
+          this.state.user.uid,
 
         userEmail:
           this.state.user.email || '',
@@ -288,7 +327,12 @@ const APP = {
         username:
           this.state.profile
             ? this.state.profile.username
-            : 'User'
+            : 'User',
+
+        userPhone:
+          this.state.profile
+            ? this.state.profile.phone || ''
+            : ''
       });
   },
 
@@ -307,9 +351,11 @@ const APP = {
         b => b.id === bookingId
       );
 
+
     if (!booking) {
       return;
     }
+
 
     if (
       !this.state.user ||
@@ -323,12 +369,14 @@ const APP = {
       return;
     }
 
+
     await db
       .collection('bookings')
       .doc(bookingId)
       .update({
         status: newStatus
       });
+
 
     booking.status = newStatus;
 
@@ -381,28 +429,28 @@ const APP = {
 
 
         // -----------------------------------------------------
-        // BOOKING INFO MODAL CLOSE
+        // PREVIOUS USER MODAL CLOSE
         // -----------------------------------------------------
 
         if (
-          t.closest('[data-booking-info-close]')
+          t.closest('#previous-user-close')
         ) {
 
-          this.closeBookingInfo();
+          this.closePreviousUserModal();
 
           return;
         }
 
 
         // -----------------------------------------------------
-        // BOOKING INFO BACKDROP
+        // PREVIOUS USER MODAL BACKDROP
         // -----------------------------------------------------
 
         if (
-          t.id === 'booking-info-backdrop'
+          t.id === 'previous-user-modal'
         ) {
 
-          this.closeBookingInfo();
+          this.closePreviousUserModal();
 
           return;
         }
@@ -413,20 +461,25 @@ const APP = {
         // -----------------------------------------------------
 
         const callBtn =
-          t.closest('[data-call-booking]');
+          t.closest('#previous-user-call');
 
         if (callBtn) {
 
           const bookingId =
-            callBtn.dataset.callBooking;
+            this.state.selectedBooking
+              ? this.state.selectedBooking.id
+              : null;
 
-          const booking =
-            this.state.bookings.find(
-              b => b.id === bookingId
-            );
+          if (bookingId) {
 
-          if (booking) {
-            this.callBookingUser(booking);
+            const booking =
+              this.state.bookings.find(
+                b => b.id === bookingId
+              );
+
+            if (booking) {
+              this.callBookingUser(booking);
+            }
           }
 
           return;
@@ -501,65 +554,75 @@ const APP = {
 
         if (slot) {
 
-          // Past slots cannot be opened
+          const start =
+            Number(slot.dataset.start);
+
+          const end =
+            Number(slot.dataset.end);
+
+          const machineId =
+            slot.dataset.machine;
+
+
+          /*
+           * Past slots cannot be opened.
+           */
           if (
             slot.classList.contains('past')
           ) {
             return;
           }
 
-          // Own booking remains disabled
+
+          /*
+           * Find any active booking overlapping
+           * this exact slot.
+           */
+          const booking =
+            this.findOverlappingBooking(
+              machineId,
+              start,
+              end
+            );
+
+
+          /*
+           * TAKEN / RUNNING / OTHER USER:
+           * Open contact details.
+           */
+          if (booking) {
+
+            this.openPreviousUserModal(
+              booking
+            );
+
+            return;
+          }
+
+
+          /*
+           * Own slot with no active booking
+           * should not normally occur, but keep
+           * it safe.
+           */
           if (
             slot.classList.contains('mine')
           ) {
             return;
           }
 
-          // Running slots can be viewed
-          if (
-            slot.classList.contains('running')
-          ) {
 
-            const bookingId =
-              slot.dataset.bookingId;
-
-            if (bookingId) {
-              this.openBookingInfo(
-                bookingId
-              );
-            }
-
-            return;
-          }
-
-          // Other booked/taken slots can be viewed
-          if (
-            slot.classList.contains('taken')
-          ) {
-
-            const bookingId =
-              slot.dataset.bookingId;
-
-            if (bookingId) {
-              this.openBookingInfo(
-                bookingId
-              );
-            }
-
-            return;
-          }
-
-          // Free slot = booking action
+          /*
+           * FREE SLOT
+           */
           if (
             slot.classList.contains('free')
           ) {
 
             this.bookSlot(
-              slot.dataset.machine,
-              parseInt(
-                slot.dataset.start,
-                10
-              )
+              machineId,
+              start,
+              end
             );
 
             return;
@@ -634,7 +697,9 @@ const APP = {
         }
 
 
-        if (t.id === 'booking-success') {
+        if (
+          t.id === 'booking-success'
+        ) {
 
           const overlay =
             document.getElementById(
@@ -643,6 +708,36 @@ const APP = {
 
           if (overlay) {
             overlay.classList.add('hidden');
+          }
+
+          return;
+        }
+
+
+        // -----------------------------------------------------
+        // COMPLETION REMINDER DISMISS
+        // -----------------------------------------------------
+
+        if (
+          t.closest('#cycle-reminder-dismiss')
+        ) {
+
+          const current =
+            this.getRunningUserBooking();
+
+          if (current) {
+
+            this.state.reminderDismissedBookingId =
+              current.id;
+          }
+
+          const banner =
+            document.getElementById(
+              'cycle-reminder-banner'
+            );
+
+          if (banner) {
+            banner.classList.add('hidden');
           }
 
           return;
@@ -803,6 +898,10 @@ const APP = {
   },
 
 
+  // =========================================================
+  // SAVE USERNAME + PHONE
+  // =========================================================
+
   async handleSaveUsername() {
 
     const input =
@@ -810,19 +909,32 @@ const APP = {
         'new-username'
       );
 
+    const phoneInput =
+      document.getElementById(
+        'new-phone'
+      );
+
     const errorEl =
       document.getElementById(
         'username-error'
       );
 
+
     if (!input) {
       return;
     }
 
+
     const username =
       input.value.trim();
 
+    const phone =
+      phoneInput
+        ? phoneInput.value.trim()
+        : '';
 
+
+    // Username must be: 204 Arjun
     if (!/^\d+\s+\S+/.test(username)) {
 
       if (errorEl) {
@@ -835,11 +947,26 @@ const APP = {
     }
 
 
+    // Phone must be exactly 10 digits
+    if (!/^\d{10}$/.test(phone)) {
+
+      if (errorEl) {
+
+        errorEl.textContent =
+          'Enter a valid 10-digit contact number';
+      }
+
+      return;
+    }
+
+
     try {
 
       await this.saveUsername(
-        username
+        username,
+        phone
       );
+
 
       const modal =
         document.getElementById(
@@ -850,12 +977,13 @@ const APP = {
         modal.classList.add('hidden');
       }
 
+
       await this.afterLogin();
 
     } catch (e) {
 
       console.error(
-        'Username save failed:',
+        'Profile save failed:',
         e
       );
 
@@ -868,6 +996,10 @@ const APP = {
     }
   },
 
+
+  // =========================================================
+  // LOGOUT
+  // =========================================================
 
   async logout() {
 
@@ -1000,14 +1132,15 @@ const APP = {
             this.state.bookings =
               all.sort(
                 (a, b) =>
-                  (b.createdAt || 0) -
-                  (a.createdAt || 0)
+                  this.timestampValue(b.createdAt) -
+                  this.timestampValue(a.createdAt)
               );
 
 
             this.render();
 
           },
+
 
           (err) => {
 
@@ -1068,6 +1201,38 @@ const APP = {
       greeting.textContent =
         email.charAt(0).toUpperCase() +
         email.slice(1);
+    }
+
+
+    const usernameInput =
+      document.getElementById(
+        'new-username'
+      );
+
+    if (
+      usernameInput &&
+      this.state.profile &&
+      this.state.profile.username
+    ) {
+
+      usernameInput.value =
+        this.state.profile.username;
+    }
+
+
+    const phoneInput =
+      document.getElementById(
+        'new-phone'
+      );
+
+    if (
+      phoneInput &&
+      this.state.profile &&
+      this.state.profile.phone
+    ) {
+
+      phoneInput.value =
+        this.state.profile.phone;
     }
 
 
@@ -1161,10 +1326,13 @@ const APP = {
 
           this.persistStatus(
             b.id,
-            'awaiting_confirmation'
+            'awaiting_confirmation',
+            {
+              confirmationDeadline:
+                b.confirmationDeadline
+            }
           );
         }
-
       }
 
 
@@ -1257,7 +1425,8 @@ const APP = {
 
   async persistStatus(
     id,
-    status
+    status,
+    extraData = {}
   ) {
 
     try {
@@ -1266,7 +1435,10 @@ const APP = {
         .collection('bookings')
         .doc(id)
         .update({
-          status: status
+
+          status: status,
+
+          ...extraData
         });
 
     } catch (e) {
@@ -1280,8 +1452,40 @@ const APP = {
 
 
   // =========================================================
-  // QUERIES
+  // BOOKING QUERIES
   // =========================================================
+
+  isActiveBooking(b) {
+
+    return !!b &&
+      [
+        'booked',
+        'awaiting_confirmation',
+        'confirmed',
+        'running'
+      ].includes(b.status);
+  },
+
+
+  findOverlappingBooking(
+    machineId,
+    startTime,
+    endTime
+  ) {
+
+    return this.state.bookings.find(
+      b =>
+
+        b.machineId === machineId &&
+
+        this.isActiveBooking(b) &&
+
+        Number(b.startTime) < endTime &&
+
+        Number(b.endTime) > startTime
+    ) || null;
+  },
+
 
   awaitingBooking() {
 
@@ -1294,6 +1498,7 @@ const APP = {
       b =>
         b.userId ===
           this.state.user.uid &&
+
         b.status ===
           'awaiting_confirmation'
     ) || null;
@@ -1312,13 +1517,28 @@ const APP = {
         b.userId ===
           this.state.user.uid &&
 
-        [
-          'booked',
-          'awaiting_confirmation',
-          'confirmed',
-          'running'
-        ].includes(b.status)
+        this.isActiveBooking(b)
     );
+  },
+
+
+  getRunningUserBooking() {
+
+    if (!this.state.user) {
+      return null;
+    }
+
+
+    return this.state.bookings.find(
+      b =>
+        b.userId ===
+          this.state.user.uid &&
+
+        b.status ===
+          'running' &&
+
+        b.endTime > this.now()
+    ) || null;
   },
 
 
@@ -1346,12 +1566,7 @@ const APP = {
 
 
           if (
-            ![
-              'booked',
-              'awaiting_confirmation',
-              'confirmed',
-              'running'
-            ].includes(b.status)
+            !this.isActiveBooking(b)
           ) {
 
             return false;
@@ -1393,7 +1608,8 @@ const APP = {
 
   async bookSlot(
     machineId,
-    startTime
+    startTime,
+    slotEndTime = null
   ) {
 
 
@@ -1409,21 +1625,27 @@ const APP = {
     }
 
 
+    /*
+     * Use the actual generated slot end.
+     * This matters for a shorter final slot.
+     */
+    const endTime =
+      slotEndTime ||
+      (
+        startTime +
+        this.SLOT_MS
+      );
+
+
+    /*
+     * Prevent overlapping bookings,
+     * not just identical start times.
+     */
     const taken =
-      this.state.bookings.find(
-        b =>
-          b.machineId ===
-            machineId &&
-
-          b.startTime ===
-            startTime &&
-
-          [
-            'booked',
-            'awaiting_confirmation',
-            'confirmed',
-            'running'
-          ].includes(b.status)
+      this.findOverlappingBooking(
+        machineId,
+        startTime,
+        endTime
       );
 
 
@@ -1431,6 +1653,21 @@ const APP = {
 
       this.toast(
         'That slot was just taken · pick another'
+      );
+
+      return;
+    }
+
+
+    /*
+     * Don't allow booking a slot that has already started.
+     */
+    if (
+      startTime < this.now()
+    ) {
+
+      this.toast(
+        'That slot has already started'
       );
 
       return;
@@ -1451,9 +1688,7 @@ const APP = {
 
       startTime: startTime,
 
-      endTime:
-        startTime +
-        this.SLOT_MS,
+      endTime: endTime,
 
       status: 'booked',
 
@@ -1471,6 +1706,9 @@ const APP = {
     };
 
 
+    /*
+     * Optimistic local booking.
+     */
     this.state.bookings.unshift(
       {
         ...booking,
@@ -1484,7 +1722,12 @@ const APP = {
         username:
           this.state.profile
             ? this.state.profile.username
-            : 'User'
+            : 'User',
+
+        userPhone:
+          this.state.profile
+            ? this.state.profile.phone || ''
+            : ''
       }
     );
 
@@ -1571,6 +1814,10 @@ const APP = {
     const start =
       this.now();
 
+    const end =
+      start +
+      this.SLOT_MS;
+
 
     const booking = {
 
@@ -1586,9 +1833,7 @@ const APP = {
 
       startTime: start,
 
-      endTime:
-        start +
-        this.SLOT_MS,
+      endTime: end,
 
       status: 'running',
 
@@ -1619,7 +1864,12 @@ const APP = {
         username:
           this.state.profile
             ? this.state.profile.username
-            : 'User'
+            : 'User',
+
+        userPhone:
+          this.state.profile
+            ? this.state.profile.phone || ''
+            : ''
       }
     );
 
@@ -1690,6 +1940,26 @@ const APP = {
 
       this.toast(
         'You cannot confirm this booking'
+      );
+
+      return;
+    }
+
+
+    /*
+     * Don't confirm after the deadline.
+     */
+    if (
+      this.now() >=
+      b.confirmationDeadline
+    ) {
+
+      b.status = 'expired';
+
+      this.render();
+
+      this.toast(
+        'Confirmation window expired'
       );
 
       return;
@@ -1872,70 +2142,62 @@ const APP = {
 
 
   // =========================================================
-  // BOOKING INFO
+  // PREVIOUS USER / TAKEN SLOT MODAL
   // =========================================================
 
-  openBookingInfo(bookingId) {
-
-    const booking =
-      this.state.bookings.find(
-        b => b.id === bookingId
-      );
+  openPreviousUserModal(booking) {
 
     if (!booking) {
       return;
     }
 
-    // Do not show own booking details
+
+    /*
+     * Own booking details are not shown
+     * in the taken-user popup.
+     */
     if (
       this.state.user &&
-      booking.userId === this.state.user.uid
+      booking.userId ===
+        this.state.user.uid
     ) {
+
       return;
     }
+
 
     this.state.selectedBooking =
       booking;
 
 
-    const backdrop =
+    const modal =
       document.getElementById(
-        'booking-info-backdrop'
+        'previous-user-modal'
       );
 
-    if (!backdrop) {
+    if (!modal) {
       return;
     }
 
 
     const nameEl =
       document.getElementById(
-        'booking-info-name'
+        'previous-user-name'
       );
 
     const roomEl =
       document.getElementById(
-        'booking-info-room'
+        'previous-user-room'
       );
 
     const contactEl =
       document.getElementById(
-        'booking-info-contact'
-      );
-
-    const machineEl =
-      document.getElementById(
-        'booking-info-machine'
-      );
-
-    const timeEl =
-      document.getElementById(
-        'booking-info-time'
+        'previous-user-contact'
       );
 
     const callBtn =
-      document.querySelector(
-        '[data-call-booking]'
+      document.getElementById(
+        'previous-user-call'
       );
 
 
@@ -1943,70 +2205,48 @@ const APP = {
       booking.username ||
       'Unknown user';
 
+
     const room =
       this.extractRoomNumber(
         username
       );
 
-    const contact =
+
+    const name =
+      this.extractPersonName(
+        username
+      );
+
+
+    const phone =
       booking.userPhone ||
       booking.phone ||
       booking.contact ||
-      booking.userEmail ||
-      'Contact unavailable';
+      '';
 
 
     if (nameEl) {
+
       nameEl.textContent =
-        this.extractPersonName(
-          username
-        );
+        name || 'Unknown user';
     }
 
+
     if (roomEl) {
+
       roomEl.textContent =
         room || 'Not provided';
     }
 
+
     if (contactEl) {
+
       contactEl.textContent =
-        contact;
-    }
-
-
-    const machine =
-      this.machines.find(
-        m =>
-          m.id ===
-          booking.machineId
-      );
-
-    if (machineEl) {
-      machineEl.textContent =
-        machine
-          ? `${machine.name} · Machine ${machine.code}`
-          : 'Machine';
-    }
-
-
-    if (timeEl) {
-      timeEl.textContent =
-        this.fmtSlot(
-          booking.startTime,
-          booking.endTime
-        );
+        phone || 'Not available';
     }
 
 
     if (callBtn) {
-
-      callBtn.dataset.callBooking =
-        booking.id;
-
-      const phone =
-        this.extractPhone(
-          contact
-        );
 
       if (phone) {
 
@@ -2025,29 +2265,35 @@ const APP = {
     }
 
 
-    backdrop.classList.remove(
+    modal.classList.remove(
       'hidden'
     );
   },
 
 
-  closeBookingInfo() {
+  closePreviousUserModal() {
 
-    const backdrop =
+    const modal =
       document.getElementById(
-        'booking-info-backdrop'
+        'previous-user-modal'
       );
 
-    if (backdrop) {
-      backdrop.classList.add(
+    if (modal) {
+
+      modal.classList.add(
         'hidden'
       );
     }
+
 
     this.state.selectedBooking =
       null;
   },
 
+
+  // =========================================================
+  // ROOM / NAME / PHONE HELPERS
+  // =========================================================
 
   extractRoomNumber(username) {
 
@@ -2055,10 +2301,12 @@ const APP = {
       return '';
     }
 
+
     const match =
       String(username).match(
-        /^\s*(\d+)/
+        /^\s*(\d+)\s+/
       );
+
 
     return match
       ? match[1]
@@ -2072,48 +2320,71 @@ const APP = {
       return 'Unknown user';
     }
 
-    return String(username)
-      .replace(
-        /^\s*\d+\s*/,
-        ''
-      )
-      .trim() ||
-      'Unknown user';
+
+    const text =
+      String(username).trim();
+
+
+    const match =
+      text.match(
+        /^\d+\s+(.+)$/
+      );
+
+
+    if (match) {
+      return match[1].trim();
+    }
+
+
+    return text || 'Unknown user';
   },
 
 
-  extractPhone(contact) {
+  extractPhone(value) {
 
-    if (!contact) {
+    if (!value) {
       return '';
     }
 
-    const value =
-      String(contact).trim();
-
-    if (
-      value.includes('@')
-    ) {
-      return '';
-    }
 
     const phone =
-      value.replace(
-        /[^\d+]/g,
-        ''
-      );
+      String(value)
+        .replace(
+          /[^\d+]/g,
+          ''
+        );
 
+
+    /*
+     * Indian 10-digit phone numbers.
+     * Also accepts +91XXXXXXXXXX if present.
+     */
     if (
-      phone.length >= 10
+      /^\d{10}$/.test(phone)
     ) {
+
       return phone;
     }
+
+
+    if (
+      /^\+91\d{10}$/.test(phone)
+    ) {
+
+      return phone;
+    }
+
 
     return '';
   },
 
 
   callBookingUser(booking) {
+
+    if (!booking) {
+      return;
+    }
+
 
     const contact =
       booking.userPhone ||
@@ -2126,6 +2397,7 @@ const APP = {
       this.extractPhone(
         contact
       );
+
 
     if (!phone) {
 
@@ -2148,10 +2420,18 @@ const APP = {
 
   updateCompletionReminder() {
 
+    /*
+     * This matches the HTML supplied for V1:
+     *
+     * #cycle-reminder-banner
+     * #cycle-reminder-detail
+     * #cycle-reminder-dismiss
+     */
     const banner =
       document.getElementById(
-        'completion-banner'
+        'cycle-reminder-banner'
       );
+
 
     if (!banner) {
       return;
@@ -2173,38 +2453,10 @@ const APP = {
 
 
     /*
-     * Find the current user's running booking
-     * that is within the final 5 minutes.
+     * Find current user's running booking.
      */
-
     const booking =
-      this.state.bookings.find(
-        b => {
-
-          if (
-            b.userId !==
-            this.state.user.uid
-          ) {
-            return false;
-          }
-
-          if (
-            b.status !==
-            'running'
-          ) {
-            return false;
-          }
-
-          const remaining =
-            b.endTime - now;
-
-          return (
-            remaining > 0 &&
-            remaining <=
-              this.COMPLETION_REMINDER_MS
-          );
-        }
-      );
+      this.getRunningUserBooking();
 
 
     if (!booking) {
@@ -2217,9 +2469,44 @@ const APP = {
     }
 
 
-    banner.classList.remove(
-      'hidden'
-    );
+    const remaining =
+      booking.endTime -
+      now;
+
+
+    /*
+     * Reminder begins exactly 5 minutes
+     * before completion and stops at completion.
+     */
+    if (
+      remaining <= 0 ||
+      remaining >
+        this.COMPLETION_REMINDER_MS
+    ) {
+
+      banner.classList.add(
+        'hidden'
+      );
+
+      return;
+    }
+
+
+    /*
+     * Don't immediately bring the banner
+     * back after the user dismisses it.
+     */
+    if (
+      this.state.reminderDismissedBookingId ===
+      booking.id
+    ) {
+
+      banner.classList.add(
+        'hidden'
+      );
+
+      return;
+    }
 
 
     const machine =
@@ -2232,30 +2519,20 @@ const APP = {
 
     const detail =
       document.getElementById(
-        'completion-detail'
+        'cycle-reminder-detail'
       );
 
 
     if (detail) {
 
       detail.textContent =
-        `${machine ? machine.name : 'Machine'} · finishes in ${this.fmtDur(
-          booking.endTime - now
-        )}`;
+        `${machine ? machine.name : 'Machine'} · finishes in ${this.fmtDur(remaining)}`;
     }
 
 
-    const title =
-      document.getElementById(
-        'completion-title'
-      );
-
-
-    if (title) {
-
-      title.textContent =
-        'Your washing cycle is almost complete';
-    }
+    banner.classList.remove(
+      'hidden'
+    );
   },
 
 
@@ -2414,7 +2691,10 @@ const APP = {
       ) {
 
         msgText.textContent =
-          `Running for 1 hour 30 minutes · ends at ${this.fmtTime(endDate)} · others see you on the dashboard`;
+          `Running for ${this.fmtDurationLong(
+            booking.endTime -
+            booking.startTime
+          )} · ends at ${this.fmtTime(endDate)} · others see the machine as occupied`;
 
         msgBox.classList.add(
           'running'
@@ -2555,10 +2835,12 @@ const APP = {
 
           ctx.save();
 
+
           ctx.translate(
             p.x,
             p.y
           );
+
 
           ctx.rotate(
             p.rot
@@ -2669,6 +2951,8 @@ const APP = {
 
     this.updateClocks();
 
+    this.updateAwaitingBanner();
+
     this.updateCompletionReminder();
   },
 
@@ -2726,7 +3010,9 @@ const APP = {
     if (userChip) {
 
       userChip.innerHTML =
-        `<strong>${this.state.profile.username}</strong>`;
+        `<strong>${this.escapeHtml(
+          this.state.profile.username
+        )}</strong>`;
     }
 
 
@@ -2767,7 +3053,7 @@ const APP = {
                   </div>
 
                   <div class="machine-name">
-                    ${m.name}
+                    ${this.escapeHtml(m.name)}
                   </div>
 
                 </div>
@@ -2835,7 +3121,6 @@ const APP = {
 
         const oldCls =
           porthole.className;
-
 
         const newCls =
           'porthole ' +
@@ -2933,7 +3218,6 @@ const APP = {
 
               actionHtml =
                 `<button class="btn-cancel" data-cancel="${b.id}">Cancel</button>`;
-
             }
 
 
@@ -2952,7 +3236,6 @@ const APP = {
 
               actionHtml =
                 `<button class="btn-cancel" data-cancel="${b.id}">Cancel</button>`;
-
             }
 
 
@@ -2971,7 +3254,6 @@ const APP = {
 
               actionHtml =
                 `<button class="btn-cancel" data-cancel="${b.id}">Cancel</button>`;
-
             }
 
 
@@ -3003,7 +3285,7 @@ const APP = {
                   </div>
 
                   <div class="machine-label">
-                    ${m.name}
+                    ${this.escapeHtml(m.name)}
                   </div>
 
                   <div class="time">
@@ -3159,9 +3441,7 @@ const APP = {
     ) {
 
       line =
-        `Running for ${this.userDisplay(
-          status.booking
-        )} · ends in ${this.fmtDur(
+        `Running · ends in ${this.fmtDur(
           status.booking.endTime -
           this.now()
         )}`;
@@ -3175,9 +3455,7 @@ const APP = {
     ) {
 
       line =
-        `Awaiting ${this.userDisplay(
-          status.booking
-        )} · starts in ${this.fmtDur(
+        `Awaiting confirmation · starts in ${this.fmtDur(
           status.booking.startTime -
           this.now()
         )}`;
@@ -3188,9 +3466,7 @@ const APP = {
     else {
 
       line =
-        `Booked by ${this.userDisplay(
-          status.booking
-        )} · starts in ${this.fmtDur(
+        `Booked · starts in ${this.fmtDur(
           status.booking.startTime -
           this.now()
         )}`;
@@ -3239,7 +3515,7 @@ const APP = {
             class="machine-name"
             style="font-size: 22px; margin-bottom: 6px"
           >
-            ${m.name}
+            ${this.escapeHtml(m.name)}
           </div>
 
           <div
@@ -3325,6 +3601,68 @@ const APP = {
 
 
   // =========================================================
+  // TRUE 90-MINUTE SLOT GENERATION
+  // =========================================================
+
+  getDaySlots(date) {
+
+    const dayStart =
+      new Date(date);
+
+
+    dayStart.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+
+    const dayEnd =
+      new Date(dayStart);
+
+
+    dayEnd.setDate(
+      dayEnd.getDate() + 1
+    );
+
+
+    const slots = [];
+
+
+    let start =
+      dayStart.getTime();
+
+
+    while (
+      start <
+      dayEnd.getTime()
+    ) {
+
+      const end =
+        Math.min(
+          start +
+          this.SLOT_MS,
+
+          dayEnd.getTime()
+        );
+
+
+      slots.push({
+        startTime: start,
+        endTime: end
+      });
+
+
+      start = end;
+    }
+
+
+    return slots;
+  },
+
+
+  // =========================================================
   // SLOT GRID
   // =========================================================
 
@@ -3367,220 +3705,238 @@ const APP = {
     );
 
 
-    let html = '';
-
-
-    for (
-      let hour = 0;
-      hour < 24;
-      hour++
-    ) {
-
-      const slotStart =
-        new Date(
-          baseDate
-        );
-
-
-      slotStart.setHours(
-        hour,
-        0,
-        0,
-        0
+    const slots =
+      this.getDaySlots(
+        baseDate
       );
 
 
-      const slotEnd =
-        new Date(
-          slotStart.getTime() +
-          this.SLOT_MS
-        );
+    let html = '';
 
 
-      const startMs =
-        slotStart.getTime();
+    slots.forEach(
+      slot => {
+
+        const startMs =
+          slot.startTime;
+
+        const endMs =
+          slot.endTime;
 
 
-      const taken =
-        this.state.bookings.find(
-          b =>
-
-            b.machineId ===
-              machineId &&
-
-            b.startTime ===
-              startMs &&
-
-            [
-              'booked',
-              'awaiting_confirmation',
-              'confirmed',
-              'running'
-            ].includes(b.status)
-        );
+        /*
+         * Find ANY active booking overlapping
+         * this slot.
+         */
+        const taken =
+          this.findOverlappingBooking(
+            machineId,
+            startMs,
+            endMs
+          );
 
 
-      const isPast =
-        slotEnd <= now;
+        /*
+         * A slot is past only when its end
+         * has already passed.
+         */
+        const isPast =
+          endMs <= now;
 
 
-      const isCurrent =
-        slotStart <= now &&
-        now < slotEnd;
+        const isCurrent =
+          startMs <= now &&
+          now < endMs;
 
 
-      const isMine =
-        taken &&
-        this.state.user &&
-        taken.userId ===
-          this.state.user.uid;
+        const isMine =
+          taken &&
+          this.state.user &&
+          taken.userId ===
+            this.state.user.uid;
 
 
-      let cls =
-        'slot free';
-
-
-      let sub = '';
-
-      let disabled = '';
-
-      let bookingId = '';
-
-
-      // -----------------------------------------------------
-      // PAST
-      // -----------------------------------------------------
-
-      if (
-        isPast &&
-        !taken
-      ) {
-
-        cls =
-          'slot past';
-
-        sub =
-          'past';
-
-        disabled =
-          'disabled';
-      }
-
-
-      // -----------------------------------------------------
-      // CURRENT
-      // -----------------------------------------------------
-
-      else if (
-        isCurrent &&
-        !taken
-      ) {
-
-        cls =
+        let cls =
           'slot free';
 
-        sub =
-          'now';
-      }
+        let sub =
+          this.slotDurationLabel(
+            startMs,
+            endMs
+          );
+
+        let disabled = '';
+
+        let bookingId = '';
 
 
-      // -----------------------------------------------------
-      // TAKEN
-      // -----------------------------------------------------
+        // -----------------------------------------------------
+        // ACTIVE BOOKING
+        // -----------------------------------------------------
 
-      else if (taken) {
+        if (taken) {
 
-        bookingId =
-          taken.id;
-
-
-        if (isMine) {
-
-          cls =
-            'slot mine';
-
-          sub =
-            'you';
-
-          disabled =
-            'disabled';
-
-        }
+          bookingId =
+            taken.id;
 
 
-        else {
+          if (isMine) {
 
-          if (
+            /*
+             * Your own active slot.
+             * It remains visible but cannot be booked again.
+             */
+            cls =
+              'slot mine';
+
+            sub =
+              'YOUR SLOT';
+
+            /*
+             * Keep it disabled because the user
+             * does not need to open their own contact info.
+             */
+            disabled =
+              'disabled';
+
+          }
+
+
+          else if (
             taken.status ===
             'running'
           ) {
 
+            /*
+             * Running slots remain clickable
+             * so other users can view contact details.
+             */
             cls =
               'slot running';
 
             sub =
-              'running';
+              'RUNNING';
+
+            disabled = '';
 
           }
 
+
           else {
 
+            /*
+             * Other user's booked slot.
+             * IMPORTANT: clickable.
+             */
             cls =
               'slot taken';
 
             sub =
-              'taken';
+              'TAKEN';
+
+            disabled = '';
           }
-
-          // IMPORTANT:
-          // Other users' booked slots are
-          // viewable so their contact details
-          // can be opened.
-          disabled = '';
         }
+
+
+        // -----------------------------------------------------
+        // PAST FREE SLOT
+        // -----------------------------------------------------
+
+        else if (isPast) {
+
+          cls =
+            'slot past';
+
+          sub =
+            'PAST';
+
+          disabled =
+            'disabled';
+        }
+
+
+        // -----------------------------------------------------
+        // CURRENT FREE SLOT
+        // -----------------------------------------------------
+
+        else if (isCurrent) {
+
+          cls =
+            'slot free';
+
+          sub =
+            'NOW';
+        }
+
+
+        // -----------------------------------------------------
+        // UPCOMING SLOT
+        // -----------------------------------------------------
+
+        else {
+
+          /*
+           * Keep normal duration label.
+           * If the final slot is shorter than 90 minutes,
+           * the actual duration is shown automatically.
+           */
+          sub =
+            this.slotDurationLabel(
+              startMs,
+              endMs
+            );
+
+
+          /*
+           * Optional "soon" state for slots
+           * starting within 30 minutes.
+           */
+          if (
+            startMs - now <
+              30 * 60 * 1000
+          ) {
+
+            sub =
+              'SOON';
+          }
+        }
+
+
+        html += `
+
+          <button
+            class="${cls}"
+            ${disabled}
+
+            data-start="${startMs}"
+
+            data-end="${endMs}"
+
+            data-machine="${machineId}"
+
+            ${
+              bookingId
+                ? `data-booking-id="${bookingId}"`
+                : ''
+            }
+          >
+
+            <span class="time">
+              ${this.fmtSlot(
+                startMs,
+                endMs
+              )}
+            </span>
+
+            <span class="sub">
+              ${sub}
+            </span>
+
+          </button>
+        `;
       }
-
-
-      // -----------------------------------------------------
-      // SOON
-      // -----------------------------------------------------
-
-      else if (
-        startMs - now <
-          30 * 60 * 1000 &&
-        startMs > now
-      ) {
-
-        sub =
-          'soon';
-      }
-
-
-      html += `
-
-        <button
-          class="${cls}"
-          ${disabled}
-          data-start="${startMs}"
-          data-machine="${machineId}"
-          ${bookingId
-            ? `data-booking-id="${bookingId}"`
-            : ''}
-        >
-
-          <span class="time">
-            ${this.fmtHour(
-              slotStart
-            )}
-          </span>
-
-          <span class="sub">
-            ${sub}
-          </span>
-
-        </button>
-      `;
-    }
+    );
 
 
     container.innerHTML =
@@ -3589,10 +3945,54 @@ const APP = {
 
 
   // =========================================================
+  // SLOT DURATION LABEL
+  // =========================================================
+
+  slotDurationLabel(
+    start,
+    end
+  ) {
+
+    const minutes =
+      Math.round(
+        (
+          end -
+          start
+        ) / 60000
+      );
+
+
+    if (
+      minutes === 90
+    ) {
+
+      return '90 MIN';
+    }
+
+
+    if (
+      minutes % 60 === 0
+    ) {
+
+      return `${minutes / 60} HR`;
+    }
+
+
+    return `${minutes} MIN`;
+  },
+
+
+  // =========================================================
   // FORMATTERS
   // =========================================================
 
-  fmtHour(date) {
+  fmtHour(dateOrMs) {
+
+    const date =
+      dateOrMs instanceof Date
+        ? dateOrMs
+        : new Date(dateOrMs);
+
 
     const h =
       date.getHours();
@@ -3605,12 +4005,22 @@ const APP = {
 
 
     return (
-      `${h % 12 || 12} ${ampm}`
+      `${h % 12 || 12}:` +
+      `${String(
+        date.getMinutes()
+      ).padStart(2, '0')} ` +
+      `${ampm}`
     );
   },
 
 
-  fmtTime(date) {
+  fmtTime(dateOrMs) {
+
+    const date =
+      dateOrMs instanceof Date
+        ? dateOrMs
+        : new Date(dateOrMs);
+
 
     const h =
       date.getHours();
@@ -3643,11 +4053,7 @@ const APP = {
   ) {
 
     return (
-      `${this.fmtHour(
-        new Date(start)
-      )} – ${this.fmtHour(
-        new Date(end)
-      )}`
+      `${this.fmtTime(start)} – ${this.fmtTime(end)}`
     );
   },
 
@@ -3677,7 +4083,10 @@ const APP = {
 
   fmtDur(ms) {
 
-    if (ms <= 0) {
+    if (
+      ms <= 0
+    ) {
+
       return '0m';
     }
 
@@ -3701,6 +4110,53 @@ const APP = {
     return h > 0
       ? `${h}h ${m}m`
       : `${m}m`;
+  },
+
+
+  fmtDurationLong(ms) {
+
+    if (
+      ms <= 0
+    ) {
+
+      return '0 minutes';
+    }
+
+
+    const totalMin =
+      Math.round(
+        ms / 60000
+      );
+
+
+    const h =
+      Math.floor(
+        totalMin / 60
+      );
+
+
+    const m =
+      totalMin % 60;
+
+
+    if (
+      h > 0 &&
+      m > 0
+    ) {
+
+      return `${h} hour${h === 1 ? '' : 's'} ${m} minute${m === 1 ? '' : 's'}`;
+    }
+
+
+    if (
+      h > 0
+    ) {
+
+      return `${h} hour${h === 1 ? '' : 's'}`;
+    }
+
+
+    return `${m} minute${m === 1 ? '' : 's'}`;
   },
 
 
@@ -3729,6 +4185,85 @@ const APP = {
       b.username ||
       'Someone'
     );
+  },
+
+
+  // =========================================================
+  // FIRESTORE TIMESTAMP HELPER
+  // =========================================================
+
+  timestampValue(value) {
+
+    if (!value) {
+      return 0;
+    }
+
+
+    if (
+      typeof value ===
+      'number'
+    ) {
+
+      return value;
+    }
+
+
+    if (
+      value.seconds !== undefined
+    ) {
+
+      return (
+        value.seconds * 1000 +
+        Math.floor(
+          (value.nanoseconds || 0) /
+          1000000
+        )
+      );
+    }
+
+
+    if (
+      typeof value.toMillis ===
+      'function'
+    ) {
+
+      return value.toMillis();
+    }
+
+
+    return 0;
+  },
+
+
+  // =========================================================
+  // BASIC HTML ESCAPING
+  // =========================================================
+
+  escapeHtml(value) {
+
+    return String(
+      value ?? ''
+    )
+      .replace(
+        /&/g,
+        '&amp;'
+      )
+      .replace(
+        /</g,
+        '&lt;'
+      )
+      .replace(
+        />/g,
+        '&gt;'
+      )
+      .replace(
+        /"/g,
+        '&quot;'
+      )
+      .replace(
+        /'/g,
+        '&#039;'
+      );
   },
 
 

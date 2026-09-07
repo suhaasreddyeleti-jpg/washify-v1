@@ -61,7 +61,8 @@
           <div id="login-error" class="error-msg"></div>
         </div>
 
-        <!-- ===================== USERNAME MODAL ===================== -->
+
+        <!-- ===================== USERNAME + CONTACT MODAL ===================== -->
         <div id="username-modal" class="modal-backdrop hidden">
           <div class="modal">
 
@@ -73,12 +74,14 @@
               </h3>
 
               <p>
-                Pick a display name so roommates know whose slot is whose.
+                Add your room, name and contact number so other students can
+                identify you if needed.
               </p>
             </div>
 
             <form id="username-form">
 
+              <!-- ROOM + NAME -->
               <label class="field">
                 <span class="field-label">Display Name</span>
 
@@ -86,13 +89,36 @@
                   type="text"
                   id="new-username"
                   placeholder="204 Arjun"
-                  autocomplete="off"
+                  autocomplete="name"
+                  required
                 />
 
                 <small class="field-hint">
-                  Format: <strong>[Room No] Name</strong> · shown on bookings
+                  Format: <strong>[Room No] Name</strong> · e.g. 204 Arjun
                 </small>
               </label>
+
+
+              <!-- CONTACT NUMBER -->
+              <label class="field">
+                <span class="field-label">Contact Number</span>
+
+                <input
+                  type="tel"
+                  id="new-phone"
+                  placeholder="9876543210"
+                  inputmode="numeric"
+                  autocomplete="tel"
+                  maxlength="10"
+                  required
+                />
+
+                <small class="field-hint">
+                  Your number will be shown only when someone needs to contact
+                  you about your laundry slot.
+                </small>
+              </label>
+
 
               <div id="username-error" class="error-msg"></div>
 
@@ -104,13 +130,15 @@
           </div>
         </div>
 
+
         <div class="login-foot">
           <span class="status-dot"></span>
-          <span>Powered by Google · Username saved permanently</span>
+          <span>Powered by Google · Details saved securely</span>
         </div>
 
       </div>
     </section>
+
 
 
     <!-- ===================== DASHBOARD ===================== -->
@@ -139,7 +167,7 @@
       </header>
 
 
-      <!-- ===================== EXISTING CONFIRMATION BANNER ===================== -->
+      <!-- ===================== CONFIRMATION BANNER ===================== -->
       <div id="awaiting-banner" class="awaiting-banner hidden">
 
         <div class="awaiting-pulse"></div>
@@ -154,6 +182,7 @@
           <button
             id="awaiting-confirm"
             class="btn-primary sm"
+            type="button"
           >
             Confirm
           </button>
@@ -161,6 +190,7 @@
           <button
             id="awaiting-cancel"
             class="btn-ghost sm"
+            type="button"
           >
             Cancel
           </button>
@@ -170,7 +200,7 @@
       </div>
 
 
-      <!-- ===================== CYCLE REMINDER BANNER ===================== -->
+      <!-- ===================== 5-MINUTE CYCLE REMINDER ===================== -->
       <div
         id="cycle-reminder-banner"
         class="awaiting-banner hidden"
@@ -203,6 +233,7 @@
       </div>
 
 
+
       <main class="content">
 
         <!-- ===================== MACHINES ===================== -->
@@ -217,11 +248,13 @@
         ></div>
 
 
+
         <!-- ===================== MY BOOKINGS ===================== -->
         <div
           class="section-head"
           style="margin-top: 36px"
         >
+
           <span class="section-eyebrow">
             Your Active Bookings
           </span>
@@ -229,6 +262,7 @@
           <h2 class="section-title">
             My Bookings
           </h2>
+
         </div>
 
         <div
@@ -237,12 +271,14 @@
         ></div>
 
 
+
         <!-- ===================== LOGOUT ===================== -->
         <div class="logout-row">
 
           <button
             class="btn-ghost"
             data-logout
+            type="button"
           >
             Sign Out
           </button>
@@ -259,6 +295,7 @@
     </section>
 
 
+
     <!-- ===================== MACHINE DETAIL ===================== -->
     <section id="machine-detail" class="screen hidden">
 
@@ -268,7 +305,9 @@
           class="back-btn"
           data-back
           aria-label="Back"
+          type="button"
         >
+
           <svg
             viewBox="0 0 24 24"
             width="20"
@@ -281,13 +320,17 @@
           >
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
+
         </button>
 
 
         <div class="topbar-left">
 
           <div>
-            <h1 id="machine-name">Machine</h1>
+
+            <h1 id="machine-name">
+              Machine
+            </h1>
 
             <p
               class="brand-tag"
@@ -295,6 +338,7 @@
             >
               Status
             </p>
+
           </div>
 
         </div>
@@ -309,12 +353,14 @@
       </header>
 
 
+
       <main class="content">
 
         <div
           class="machine-hero"
           id="machine-hero"
         ></div>
+
 
 
         <!-- ===================== LEGEND ===================== -->
@@ -343,6 +389,7 @@
         </div>
 
 
+
         <!-- ===================== TODAY ===================== -->
         <div
           class="section-head"
@@ -357,7 +404,7 @@
           </span>
 
           <h2 class="section-title">
-            Hourly Slots
+            90-Minute Slots
           </h2>
 
         </div>
@@ -366,6 +413,7 @@
           class="slot-grid"
           id="slot-grid-today"
         ></div>
+
 
 
         <!-- ===================== TOMORROW ===================== -->
@@ -379,7 +427,7 @@
           </span>
 
           <h2 class="section-title">
-            Hourly Slots
+            90-Minute Slots
           </h2>
 
         </div>
@@ -392,6 +440,7 @@
       </main>
 
     </section>
+
 
 
     <!-- ===================== BOOKING SUCCESS OVERLAY ===================== -->
@@ -417,6 +466,7 @@
             width="64"
             height="64"
           >
+
             <circle
               class="success-check-circle"
               cx="26"
@@ -451,6 +501,7 @@
 
           <div class="success-row">
             <span class="success-key">User</span>
+
             <span
               class="success-val"
               id="success-username"
@@ -459,6 +510,7 @@
 
           <div class="success-row">
             <span class="success-key">Machine</span>
+
             <span
               class="success-val"
               id="success-machine"
@@ -467,6 +519,7 @@
 
           <div class="success-row">
             <span class="success-key">Starts</span>
+
             <span
               class="success-val"
               id="success-start"
@@ -475,6 +528,7 @@
 
           <div class="success-row">
             <span class="success-key">Ends</span>
+
             <span
               class="success-val"
               id="success-end"
@@ -483,6 +537,7 @@
 
           <div class="success-row">
             <span class="success-key">Token</span>
+
             <span
               class="success-val mono"
               id="success-token"
@@ -491,6 +546,7 @@
 
           <div class="success-row">
             <span class="success-key">Booking ID</span>
+
             <span
               class="success-val mono"
               id="success-id"
@@ -501,15 +557,18 @@
 
 
         <div class="success-msg">
+
           <span id="success-message">
             Awaiting confirmation 15 min before start
           </span>
+
         </div>
 
 
         <button
           id="success-done-btn"
           class="btn-primary success-done"
+          type="button"
         >
           Got it
         </button>
@@ -519,7 +578,8 @@
     </div>
 
 
-    <!-- ===================== PREVIOUS USER DETAILS ===================== -->
+
+    <!-- ===================== TAKEN SLOT USER DETAILS ===================== -->
     <div
       id="previous-user-modal"
       class="modal-backdrop hidden"
@@ -535,12 +595,12 @@
           <div class="modal-icon">👤</div>
 
           <h3 id="previous-user-title">
-            Previous User
+            Booking Details
           </h3>
 
           <p>
-            The previous user's laundry cycle has ended.
-            Please contact them if their clothes are still inside.
+            Contact the person below if their clothes are still inside
+            the washing machine.
           </p>
 
         </div>
@@ -624,6 +684,7 @@
       </div>
 
     </div>
+
 
 
     <!-- ===================== TOAST ===================== -->
