@@ -1,5 +1,4 @@
 :root {
-
   --bg-base: #DCE0E5;
   --bg-tile: #ECEEF1;
   --bg-tile-line: rgba(0,0,0,0.04);
@@ -141,11 +140,8 @@ body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
-
   background: var(--bg-tile);
-
   position: relative;
-
   display: flex;
   flex-direction: column;
 
@@ -189,15 +185,11 @@ h2 {
 
 .section-eyebrow {
   display: block;
-
   font-family: var(--font-mono);
   font-size: 10px;
-
   letter-spacing: 2px;
   text-transform: uppercase;
-
   color: var(--ink-faint);
-
   margin-bottom: var(--s-1);
 }
 
@@ -214,9 +206,7 @@ h2 {
 .brand-mark {
   width: 72px;
   height: 72px;
-
   border-radius: 50%;
-
   position: relative;
 
   background:
@@ -246,9 +236,7 @@ h2 {
 .brand-drum {
   position: absolute;
   inset: 8%;
-
   border-radius: 50%;
-
   background: var(--drum-1);
 }
 
@@ -258,10 +246,8 @@ h2 {
 
 .brand-drum::before {
   content: '';
-
   position: absolute;
   inset: 0;
-
   border-radius: 50%;
 
   background-image:
@@ -272,17 +258,14 @@ h2 {
 
   background-size: 7px 7px;
   background-position: 3.5px 3.5px;
-
   opacity: 0.7;
 }
 
 .brand-water {
   position: absolute;
-
   left: 12%;
   right: 12%;
   bottom: 10%;
-
   height: 30%;
 
   background:
@@ -297,7 +280,6 @@ h2 {
 
 .brand-mark::before {
   content: '';
-
   position: absolute;
   inset: 0;
 
@@ -330,11 +312,8 @@ h2 {
 
 .login-card {
   background: var(--bg-surface);
-
   border-radius: var(--r-lg);
-
   padding: var(--s-7) var(--s-5);
-
   width: 100%;
   max-width: 360px;
 
@@ -362,59 +341,46 @@ h2 {
 .brand-tag {
   font-family: var(--font-mono);
   font-size: 10px;
-
   color: var(--ink-mute);
-
   text-transform: uppercase;
   letter-spacing: 1.5px;
-
   margin-top: var(--s-1);
 }
 
 .login-hint {
   text-align: center;
-
   font-size: 12px;
   color: var(--ink-mute);
-
   margin-bottom: var(--s-4);
 
   font-family: var(--font-mono);
-
   letter-spacing: 0.3px;
   line-height: 1.5;
 }
 
 .google-btn {
   width: 100%;
-
   padding: var(--s-3) var(--s-4);
 
   background: white;
-
   border: 1.5px solid var(--border-default);
-
   border-radius: var(--r-sm);
 
   font-weight: 500;
   font-size: 14px;
-
   color: var(--ink-strong);
 
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: var(--s-3);
 
   transition: all 0.15s;
-
   margin-bottom: var(--s-3);
 }
 
 .google-btn:hover {
   background: var(--bg-tile);
-
   border-color: var(--ink-mute);
 
   box-shadow:
@@ -445,7 +411,6 @@ h2 {
   -webkit-backdrop-filter: blur(8px);
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -468,7 +433,6 @@ h2 {
 
 .modal {
   background: var(--bg-surface);
-
   border-radius: var(--r-lg);
 
   padding: var(--s-6);
@@ -508,22 +472,17 @@ h2 {
 
 .modal-head h3 {
   font-family: var(--font-display);
-
   font-weight: 700;
   font-size: 22px;
-
   color: var(--ink-strong);
 
   margin-bottom: 6px;
-
   letter-spacing: -0.3px;
 }
 
 .modal-head p {
   font-size: 13px;
-
   color: var(--ink-mute);
-
   line-height: 1.5;
 }
 
@@ -542,14 +501,12 @@ h2 {
 
   font-family: var(--font-mono);
   font-size: 10px;
-
   letter-spacing: 1.5px;
   text-transform: uppercase;
 
   color: var(--ink-mute);
 
   margin-bottom: var(--s-2);
-
   font-weight: 500;
 }
 
@@ -561,11 +518,9 @@ h2 {
   background: var(--bg-tile);
 
   border: 1px solid var(--border-subtle);
-
   border-radius: var(--r-sm);
 
   font-size: 15px;
-
   font-family: var(--font-mono);
 
   color: var(--ink-strong);
@@ -575,7 +530,6 @@ h2 {
 
 .field input:focus {
   border-color: var(--status-confirmed);
-
   background: var(--bg-surface);
 
   box-shadow:
@@ -592,11 +546,9 @@ h2 {
 
   font-family: var(--font-mono);
   font-size: 10px;
-
   color: var(--ink-faint);
 
   margin-top: var(--s-1);
-
   line-height: 1.4;
 }
 
@@ -606,7 +558,6 @@ h2 {
 
 .error-msg {
   background: var(--status-danger-bg);
-
   color: var(--status-danger);
 
   padding: var(--s-2) var(--s-3);
@@ -614,7 +565,6 @@ h2 {
   border-radius: var(--r-sm);
 
   font-size: 12px;
-
   margin-bottom: var(--s-3);
 
   font-family: var(--font-mono);
@@ -639,7 +589,6 @@ h2 {
   padding: var(--s-3) var(--s-4);
 
   background: var(--ink-strong);
-
   color: white;
 
   border-radius: var(--r-sm);
@@ -697,7 +646,6 @@ h2 {
   border-radius: var(--r-sm);
 
   font-size: 12px;
-
   font-weight: 500;
 
   text-transform: uppercase;
@@ -725,16 +673,14 @@ h2 {
 
   padding-top: var(--s-4);
 
-  border-top: 1px solid var(--border-subtle);
+  border-top:
+    1px solid var(--border-subtle);
 
   display: flex;
-
   align-items: center;
-
   gap: var(--s-2);
 
   font-family: var(--font-mono);
-
   font-size: 10px;
 
   color: var(--ink-faint);
@@ -774,7 +720,6 @@ h2 {
 
 .topbar {
   display: flex;
-
   align-items: center;
 
   padding: var(--s-4) var(--s-4);
@@ -795,13 +740,11 @@ h2 {
 
 .topbar-left {
   display: flex;
-
   align-items: center;
 
   gap: var(--s-3);
 
   flex: 1;
-
   min-width: 0;
 }
 
@@ -817,9 +760,7 @@ h2 {
 
 .topbar-right {
   display: flex;
-
   align-items: center;
-
   gap: var(--s-3);
 }
 
@@ -830,11 +771,9 @@ h2 {
   border-radius: var(--r-sm);
 
   background: var(--bg-tile);
-
   color: var(--ink-default);
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -884,7 +823,6 @@ h2 {
   padding: var(--s-3) var(--s-4);
 
   display: flex;
-
   align-items: center;
 
   gap: var(--s-3);
@@ -965,11 +903,9 @@ h2 {
 
 .awaiting-text {
   flex: 1;
-
   min-width: 0;
 
   position: relative;
-
   z-index: 1;
 }
 
@@ -979,7 +915,6 @@ h2 {
   color: #6E2C00;
 
   font-size: 13px;
-
   font-weight: 700;
 }
 
@@ -993,21 +928,17 @@ h2 {
   margin-top: 2px;
 
   overflow: hidden;
-
   text-overflow: ellipsis;
-
   white-space: nowrap;
 }
 
 .awaiting-actions {
   display: flex;
-
   gap: var(--s-2);
 
   flex-shrink: 0;
 
   position: relative;
-
   z-index: 1;
 }
 
@@ -1025,7 +956,6 @@ h2 {
   padding: var(--s-3) var(--s-4);
 
   display: flex;
-
   align-items: center;
 
   gap: var(--s-3);
@@ -1097,9 +1027,7 @@ h2 {
 
 .machine-grid {
   display: flex;
-
   flex-direction: column;
-
   gap: var(--s-3);
 }
 
@@ -1111,7 +1039,6 @@ h2 {
   padding: var(--s-4);
 
   display: flex;
-
   gap: var(--s-4);
 
   align-items: center;
@@ -1168,7 +1095,6 @@ h2 {
 .porthole.lg {
   width: 150px;
   height: 150px;
-
   border-width: 9px;
 }
 
@@ -1191,7 +1117,6 @@ h2 {
     );
 
   z-index: 12;
-
   pointer-events: none;
 }
 
@@ -1199,7 +1124,6 @@ h2 {
   content: '';
 
   position: absolute;
-
   inset: -4px;
 
   border-radius: 50%;
@@ -1234,7 +1158,6 @@ h2 {
   content: '';
 
   position: absolute;
-
   inset: 0;
 
   border-radius: 50%;
@@ -1300,7 +1223,6 @@ h2 {
   content: '';
 
   position: absolute;
-
   inset: 0;
 
   border-radius: 50%;
@@ -1550,13 +1472,11 @@ h2 {
 
 .machine-meta strong {
   color: var(--ink-default);
-
   font-weight: 600;
 }
 
 .machine-cta {
   background: var(--ink-strong);
-
   color: white;
 
   padding:
@@ -1590,9 +1510,7 @@ h2 {
 
 .machine-cta:disabled {
   background: var(--bg-tile);
-
   color: var(--ink-faint);
-
   cursor: not-allowed;
 }
 
@@ -1627,9 +1545,7 @@ h2 {
 
 .bookings-list {
   display: flex;
-
   flex-direction: column;
-
   gap: var(--s-2);
 }
 
@@ -1646,7 +1562,6 @@ h2 {
     var(--s-4);
 
   display: flex;
-
   align-items: center;
 
   gap: var(--s-3);
@@ -1778,9 +1693,7 @@ h2 {
   margin-top: var(--s-6);
 
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
 
   padding-top: var(--s-4);
@@ -1801,7 +1714,6 @@ h2 {
 
 .user-chip strong {
   color: var(--ink-default);
-
   font-weight: 600;
 }
 
@@ -1872,13 +1784,137 @@ h2 {
 }
 
 
+/* ============================================================
+   MACHINE USE GUIDE
+   Compact instructions shown inside the selected machine page.
+   Filled dynamically by app.js.
+============================================================ */
+
+.machine-use-guide {
+  margin-top: 14px;
+  margin-bottom: 20px;
+}
+
+.machine-use-guide:empty {
+  display: none;
+}
+
+.machine-use-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 12px 14px;
+
+  background: var(--bg-surface);
+
+  border:
+    1px solid var(--border-subtle);
+
+  border-radius: var(--r-lg);
+
+  box-shadow:
+    0 3px 12px rgba(0,0,0,0.04);
+}
+
+.machine-use-title {
+  flex: 0 0 auto;
+  min-width: 108px;
+}
+
+.machine-use-eyebrow {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: var(--ink-faint);
+
+  font-family: var(--font-mono);
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.1px;
+
+  text-transform: uppercase;
+}
+
+.machine-use-title strong {
+  display: block;
+
+  color: var(--ink-strong);
+
+  font-family: var(--font-display);
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+.machine-use-steps {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 7px;
+
+  width: 100%;
+}
+
+.machine-use-step {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  min-height: 34px;
+
+  padding: 7px 8px;
+
+  border:
+    1px solid var(--border-subtle);
+
+  border-radius: var(--r-sm);
+
+  background: var(--bg-tile);
+
+  color: var(--ink-default);
+
+  font-family: var(--font-mono);
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.35px;
+
+  text-align: center;
+
+  white-space: nowrap;
+}
+
+.machine-use-symbol {
+  font-size: 13px;
+  line-height: 1;
+  color: var(--ink-strong);
+}
+
+.machine-use-step.quick .machine-use-symbol {
+  font-size: 10px;
+  letter-spacing: 0;
+}
+
+
 /* =========================
    LEGEND
 ========================= */
 
 .legend {
   display: flex;
-
   flex-wrap: wrap;
 
   gap: var(--s-3);
@@ -1899,7 +1935,6 @@ h2 {
 
 .legend-item {
   display: flex;
-
   align-items: center;
 
   gap: var(--s-2);
@@ -1954,7 +1989,7 @@ h2 {
 
 
 /* =========================
-   90-MINUTE SLOTS
+   1-HOUR SLOTS
 ========================= */
 
 .slot-grid {
@@ -2041,12 +2076,15 @@ h2 {
 }
 
 
-/* USER'S OWN BOOKING */
+/* =========================
+   USER'S OWN BOOKING
+========================= */
 
 .slot.mine {
   background: var(--status-confirmed-bg);
 
-  border-color: var(--status-confirmed);
+  border-color:
+    var(--status-confirmed);
 
   cursor: pointer;
 }
@@ -2069,7 +2107,9 @@ h2 {
 }
 
 
-/* TAKEN SLOT */
+/* =========================
+   TAKEN SLOT
+========================= */
 
 .slot.taken {
   background: var(--status-booked-bg);
@@ -2083,7 +2123,8 @@ h2 {
 }
 
 .slot.taken:hover {
-  border-color: var(--status-booked);
+  border-color:
+    var(--status-booked);
 
   background:
     #F8EFC1;
@@ -2103,7 +2144,9 @@ h2 {
 }
 
 
-/* RUNNING SLOT */
+/* =========================
+   RUNNING SLOT
+========================= */
 
 .slot.running {
   background: var(--status-running-bg);
@@ -2115,7 +2158,8 @@ h2 {
 }
 
 .slot.running:hover {
-  border-color: var(--status-running);
+  border-color:
+    var(--status-running);
 
   transform: translateY(-1px);
 }
@@ -2125,12 +2169,15 @@ h2 {
 }
 
 
-/* PAST SLOT */
+/* =========================
+   PAST SLOT
+========================= */
 
 .slot.past {
   background: transparent;
 
-  border-color: var(--border-subtle);
+  border-color:
+    var(--border-subtle);
 
   opacity: 0.4;
 
@@ -2210,20 +2257,17 @@ h2 {
 
 .success-overlay {
   position: fixed;
-
   inset: 0;
 
   background:
     rgba(26, 39, 51, 0.92);
 
   backdrop-filter: blur(12px);
-
   -webkit-backdrop-filter: blur(12px);
 
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   padding: var(--s-4);
@@ -2476,20 +2520,289 @@ h2 {
 }
 
 
+/* ============================================================
+   WASHIFY V1 — NIGHT MODE
+   Visual only. No booking/backend logic.
+============================================================ */
+
+html,
+body,
+#app,
+.topbar,
+.login-card,
+.modal,
+.machine-card,
+.booking-row,
+.empty-bookings,
+.field input,
+.back-btn,
+.google-btn,
+.btn-ghost,
+.theme-toggle,
+.machine-use-card,
+.machine-use-step {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =========================
+   THEME TOGGLE
+========================= */
+
+.theme-toggle {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  min-height: 34px;
+
+  padding: 7px 10px;
+
+  border:
+    1px solid var(--border-default);
+
+  border-radius: var(--r-full);
+
+  background: var(--bg-tile);
+
+  color: var(--ink-default);
+
+  font-family: var(--font-mono);
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.6px;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-surface);
+
+  border-color:
+    var(--ink-mute);
+
+  transform:
+    translateY(-1px);
+}
+
+.theme-toggle:active {
+  transform:
+    scale(0.97);
+}
+
+.theme-toggle-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.theme-toggle-label {
+  line-height: 1;
+}
+
+
+/* =========================
+   NIGHT MODE
+========================= */
+
+body.night-mode {
+  --bg-base: #0D1117;
+  --bg-tile: #151B23;
+
+  --bg-tile-line:
+    rgba(255,255,255,0.035);
+
+  --bg-surface: #1A222D;
+
+  --ink-strong: #F2F5F7;
+  --ink-default: #D8E0E7;
+  --ink-mute: #9BA9B6;
+  --ink-faint: #71808D;
+
+  --border-subtle: #293440;
+  --border-default: #3A4754;
+
+  --glass-hi: #687583;
+  --glass-mid: #414D59;
+  --glass-lo: #222B34;
+
+  --steel-1: #69737E;
+  --steel-2: #46515C;
+  --steel-3: #303942;
+
+  --drum-1: #202A34;
+  --drum-2: #0B0F14;
+}
+
+body.night-mode {
+  background-image:
+    linear-gradient(
+      var(--bg-tile-line)
+      1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      var(--bg-tile-line)
+      1px,
+      transparent 1px
+    );
+}
+
+body.night-mode #app {
+  box-shadow:
+    0 0 0 1px
+    rgba(255,255,255,0.04),
+
+    0 24px 60px
+    rgba(0,0,0,0.35);
+}
+
+body.night-mode .google-btn {
+  background: #202833;
+
+  border-color:
+    var(--border-default);
+
+  color:
+    var(--ink-strong);
+}
+
+body.night-mode .google-btn:hover {
+  background: #27313D;
+
+  border-color:
+    #566574;
+}
+
+body.night-mode .field input {
+  background: #111820;
+
+  border-color:
+    var(--border-subtle);
+
+  color:
+    var(--ink-strong);
+}
+
+body.night-mode .field input:focus {
+  background: #151E28;
+}
+
+body.night-mode .btn-ghost {
+  color:
+    var(--ink-default);
+}
+
+body.night-mode .awaiting-text strong,
+body.night-mode .awaiting-text p {
+  color:
+    #FFD7B5;
+}
+
+body.night-mode
+#cycle-reminder-banner
+.awaiting-text strong,
+body.night-mode
+#cycle-reminder-banner
+.awaiting-text p {
+  color:
+    #FFD0AA;
+}
+
+
+/* =========================
+   NIGHT MODE — MACHINE GUIDE
+========================= */
+
+body.night-mode .machine-use-card {
+  box-shadow:
+    0 10px 26px
+    rgba(0,0,0,0.16);
+}
+
+body.night-mode .machine-use-step {
+  background:
+    #111820;
+
+  border-color:
+    var(--border-default);
+
+  color:
+    var(--ink-default);
+}
+
+body.night-mode .machine-use-symbol {
+  color:
+    var(--ink-strong);
+}
+
+
 /* =========================
    MOBILE ADJUSTMENTS
 ========================= */
+
+@media (max-width: 600px) {
+
+  .machine-use-card {
+    display: block;
+    padding: 12px;
+  }
+
+  .machine-use-title {
+    margin-bottom: 9px;
+  }
+
+  .machine-use-steps {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+@media (max-width: 430px) {
+
+  .theme-toggle {
+    min-height: 32px;
+
+    padding:
+      6px 8px;
+  }
+
+  .theme-toggle-label {
+    display: none;
+  }
+
+  .theme-toggle-icon {
+    font-size: 16px;
+  }
+}
+
 
 @media (max-width: 380px) {
 
   .machine-card {
     gap: var(--s-3);
-    padding: var(--s-3);
+
+    padding:
+      var(--s-3);
   }
 
   .porthole {
     width: 90px;
     height: 90px;
+
     border-width: 6px;
   }
 
@@ -2528,498 +2841,16 @@ h2 {
   .modal {
     padding: var(--s-5);
   }
-}
 
-
-/* ============================================================
-   WASHIFY V1 — NIGHT MODE + MACHINE INSTRUCTIONS
-   Only visual additions. Existing styles remain unchanged.
-   ============================================================ */
-
-html,
-body,
-#app,
-.topbar,
-.login-card,
-.modal,
-.machine-card,
-.booking-row,
-.empty-bookings,
-.instruction-card,
-.field input,
-.back-btn,
-.google-btn,
-.btn-ghost,
-.theme-toggle {
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-
-.theme-toggle {
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 6px;
-
-  min-height: 34px;
-
-  padding: 7px 10px;
-
-  border: 1px solid var(--border-default);
-
-  border-radius: var(--r-full);
-
-  background: var(--bg-tile);
-
-  color: var(--ink-default);
-
-  font-family: var(--font-mono);
-
-  font-size: 10px;
-
-  font-weight: 600;
-
-  letter-spacing: 0.6px;
-
-  text-transform: uppercase;
-
-  white-space: nowrap;
-}
-
-.theme-toggle:hover {
-  background: var(--bg-surface);
-
-  border-color: var(--ink-mute);
-
-  transform: translateY(-1px);
-}
-
-.theme-toggle:active {
-  transform: scale(0.97);
-}
-
-.theme-toggle-icon {
-  font-size: 15px;
-  line-height: 1;
-}
-
-.theme-toggle-label {
-  line-height: 1;
-}
-
-
-/* =========================
-   MACHINE INSTRUCTIONS
-========================= */
-
-.washing-instructions {
-  margin-top: 40px;
-}
-
-.instructions-head {
-  margin-bottom: var(--s-4);
-}
-
-.instructions-grid {
-  display: grid;
-
-  grid-template-columns: 1fr;
-
-  gap: var(--s-3);
-}
-
-.instruction-card {
-  background: var(--bg-surface);
-
-  border: 1px solid var(--border-subtle);
-
-  border-radius: var(--r-lg);
-
-  padding: var(--s-4);
-
-  box-shadow:
-    0 3px 12px rgba(0,0,0,0.04);
-}
-
-.instruction-card:hover {
-  border-color: var(--border-default);
-
-  box-shadow:
-    0 7px 20px rgba(0,0,0,0.07);
-
-  transform: translateY(-1px);
-}
-
-.instruction-machine {
-  display: flex;
-
-  align-items: center;
-
-  gap: var(--s-3);
-
-  padding-bottom: var(--s-3);
-
-  margin-bottom: var(--s-3);
-
-  border-bottom:
-    1px solid var(--border-subtle);
-}
-
-.instruction-machine-code {
-  width: 42px;
-
-  height: 42px;
-
-  flex-shrink: 0;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: var(--ink-strong);
-
-  color: #FFFFFF;
-
-  font-family: var(--font-mono);
-
-  font-size: 15px;
-
-  font-weight: 700;
-
-  box-shadow:
-    inset 0 0 0 3px
-    rgba(255,255,255,0.12);
-}
-
-.instruction-kicker {
-  display: block;
-
-  margin-bottom: 2px;
-
-  color: var(--ink-faint);
-
-  font-family: var(--font-mono);
-
-  font-size: 9px;
-
-  font-weight: 600;
-
-  letter-spacing: 1.4px;
-
-  text-transform: uppercase;
-}
-
-.instruction-machine h3 {
-  color: var(--ink-strong);
-
-  font-family: var(--font-display);
-
-  font-size: 18px;
-
-  font-weight: 700;
-
-  letter-spacing: -0.2px;
-}
-
-.instruction-steps {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 10px;
-
-  padding: 0;
-
-  margin: 0;
-
-  list-style: none;
-
-  counter-reset: instruction-step;
-}
-
-.instruction-steps li {
-  counter-increment: instruction-step;
-
-  position: relative;
-
-  display: grid;
-
-  grid-template-columns: 28px 1fr;
-
-  column-gap: 10px;
-
-  align-items: start;
-
-  color: var(--ink-mute);
-
-  font-size: 12px;
-
-  line-height: 1.45;
-}
-
-.instruction-steps li::before {
-  content: counter(instruction-step);
-
-  width: 24px;
-
-  height: 24px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: var(--bg-tile);
-
-  border: 1px solid var(--border-subtle);
-
-  color: var(--ink-default);
-
-  font-family: var(--font-mono);
-
-  font-size: 10px;
-
-  font-weight: 700;
-}
-
-.instruction-steps li strong:first-child {
-  display: block;
-
-  margin-bottom: 1px;
-
-  color: var(--ink-default);
-
-  font-family: var(--font-mono);
-
-  font-size: 9px;
-
-  letter-spacing: 0.9px;
-}
-
-.instruction-steps li span {
-  display: block;
-}
-
-
-/* =========================
-   NIGHT MODE
-   Activated later by app.js
-========================= */
-
-body.night-mode {
-
-  --bg-base: #0D1117;
-
-  --bg-tile: #151B23;
-
-  --bg-tile-line:
-    rgba(255,255,255,0.035);
-
-  --bg-surface: #1A222D;
-
-
-  --ink-strong: #F2F5F7;
-
-  --ink-default: #D8E0E7;
-
-  --ink-mute: #9BA9B6;
-
-  --ink-faint: #71808D;
-
-
-  --border-subtle: #293440;
-
-  --border-default: #3A4754;
-
-
-  --glass-hi: #687583;
-
-  --glass-mid: #414D59;
-
-  --glass-lo: #222B34;
-
-
-  --steel-1: #69737E;
-
-  --steel-2: #46515C;
-
-  --steel-3: #303942;
-
-
-  --drum-1: #202A34;
-
-  --drum-2: #0B0F14;
-}
-
-body.night-mode {
-
-  background-image:
-    linear-gradient(
-      var(--bg-tile-line)
-      1px,
-      transparent 1px
-    ),
-
-    linear-gradient(
-      90deg,
-      var(--bg-tile-line)
-      1px,
-      transparent 1px
-    );
-}
-
-body.night-mode #app {
-
-  box-shadow:
-    0 0 0 1px
-    rgba(255,255,255,0.04),
-
-    0 24px 60px
-    rgba(0,0,0,0.35);
-}
-
-body.night-mode .google-btn {
-
-  background: #202833;
-
-  border-color:
-    var(--border-default);
-
-  color:
-    var(--ink-strong);
-}
-
-body.night-mode .google-btn:hover {
-
-  background: #27313D;
-
-  border-color:
-    #566574;
-}
-
-body.night-mode .field input {
-
-  background: #111820;
-
-  border-color:
-    var(--border-subtle);
-
-  color:
-    var(--ink-strong);
-}
-
-body.night-mode .field input:focus {
-
-  background: #151E28;
-}
-
-body.night-mode .btn-ghost {
-
-  color:
-    var(--ink-default);
-}
-
-body.night-mode .awaiting-text strong,
-body.night-mode .awaiting-text p {
-
-  color:
-    #FFD7B5;
-}
-
-body.night-mode
-#cycle-reminder-banner
-.awaiting-text strong,
-body.night-mode
-#cycle-reminder-banner
-.awaiting-text p {
-
-  color:
-    #FFD0AA;
-}
-
-body.night-mode
-.instruction-card:hover {
-
-  box-shadow:
-    0 10px 26px
-    rgba(0,0,0,0.22);
-}
-
-body.night-mode
-.instruction-machine-code {
-
-  background:
-    #E7EDF2;
-
-  color:
-    #10161D;
-
-  box-shadow:
-    inset 0 0 0 3px
-    rgba(0,0,0,0.10);
-}
-
-body.night-mode
-.instruction-steps li::before {
-
-  background:
-    #111820;
-
-  border-color:
-    var(--border-default);
-}
-
-
-/* =========================
-   RESPONSIVE INSTRUCTIONS
-========================= */
-
-@media (min-width: 600px) {
-
-  .instructions-grid {
-
-    grid-template-columns:
-      repeat(3, 1fr);
+  .machine-use-steps {
+    gap: 6px;
   }
-}
 
-@media (max-width: 430px) {
-
-  .theme-toggle {
-
-    min-height: 32px;
-
+  .machine-use-step {
     padding:
-      6px 8px;
-  }
+      7px 5px;
 
-  .theme-toggle-label {
-
-    display: none;
-  }
-
-  .theme-toggle-icon {
-
-    font-size: 16px;
-  }
-
-  .instruction-card {
-
-    padding:
-      var(--s-3);
+    font-size: 8px;
   }
 }
 
@@ -3027,8 +2858,8 @@ body.night-mode
 @media (prefers-reduced-motion: reduce) {
 
   .theme-toggle,
-  .instruction-card {
-
+  .machine-use-card,
+  .machine-use-step {
     transition: none;
   }
 }

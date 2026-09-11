@@ -161,6 +161,7 @@
         </div>
 
         <div class="topbar-right">
+
           <button
             id="theme-toggle"
             class="theme-toggle"
@@ -173,6 +174,7 @@
           </button>
 
           <div class="clock" id="clock">--:--:--</div>
+
         </div>
 
       </header>
@@ -249,184 +251,21 @@
 
         <!-- ===================== MACHINES ===================== -->
         <div class="section-head">
-          <span class="section-eyebrow">Live Status</span>
-          <h2 class="section-title">Machines</h2>
+
+          <span class="section-eyebrow">
+            Live Status
+          </span>
+
+          <h2 class="section-title">
+            Machines
+          </h2>
+
         </div>
 
         <div
           class="machine-grid"
           id="machine-grid"
         ></div>
-
-
-        <!-- ===================== WASHING MACHINE INSTRUCTIONS ===================== -->
-        <section class="washing-instructions" aria-labelledby="washing-instructions-title">
-
-          <div class="section-head instructions-head">
-            <span class="section-eyebrow">Easy Washing</span>
-            <h2 class="section-title" id="washing-instructions-title">
-              How to Use the Machines
-            </h2>
-          </div>
-
-          <div class="instructions-grid">
-
-            <!-- ===================== WASHY 1 ===================== -->
-            <article class="instruction-card">
-
-              <div class="instruction-machine">
-
-                <span class="instruction-machine-code">
-                  A
-                </span>
-
-                <div>
-                  <span class="instruction-kicker">
-                    Washing Machine
-                  </span>
-
-                  <h3>
-                    Washy 1
-                  </h3>
-                </div>
-
-              </div>
-
-
-              <ol class="instruction-steps">
-
-                <li>
-                  <strong>ON / OFF</strong>
-                  <span>
-                    Press “ON / OFF” to turn on the machine.
-                  </span>
-                </li>
-
-                <li>
-                  <strong>QUICK</strong>
-                  <span>
-                    Select the <strong>“Quick”</strong> option.
-                  </span>
-                </li>
-
-                <li>
-                  <strong>PLAY / PAUSE</strong>
-                  <span>
-                    Press <strong>Play</strong> to start your wash.
-                    Press <strong>Pause</strong> to stop.
-                  </span>
-                </li>
-
-              </ol>
-
-            </article>
-
-
-            <!-- ===================== WASHY 2 ===================== -->
-            <article class="instruction-card">
-
-              <div class="instruction-machine">
-
-                <span class="instruction-machine-code">
-                  B
-                </span>
-
-                <div>
-                  <span class="instruction-kicker">
-                    Washing Machine
-                  </span>
-
-                  <h3>
-                    Washy 2
-                  </h3>
-                </div>
-
-              </div>
-
-
-              <ol class="instruction-steps">
-
-                <li>
-                  <strong>ON / OFF</strong>
-                  <span>
-                    Press “ON / OFF” to turn on the machine.
-                  </span>
-                </li>
-
-                <li>
-                  <strong>QUICK</strong>
-                  <span>
-                    Select the <strong>“Quick”</strong> option.
-                  </span>
-                </li>
-
-                <li>
-                  <strong>PLAY / PAUSE</strong>
-                  <span>
-                    Press <strong>Play</strong> to start your wash.
-                    Press <strong>Pause</strong> to stop.
-                  </span>
-                </li>
-
-              </ol>
-
-            </article>
-
-
-            <!-- ===================== WASHY 3 ===================== -->
-            <article class="instruction-card">
-
-              <div class="instruction-machine">
-
-                <span class="instruction-machine-code">
-                  C
-                </span>
-
-                <div>
-                  <span class="instruction-kicker">
-                    Washing Machine
-                  </span>
-
-                  <h3>
-                    Washy 3
-                  </h3>
-                </div>
-
-              </div>
-
-
-              <ol class="instruction-steps">
-
-                <li>
-                  <strong>ON / OFF</strong>
-                  <span>
-                    Press “ON / OFF” to turn on the machine.
-                  </span>
-                </li>
-
-                <li>
-                  <strong>QUICK</strong>
-                  <span>
-                    Select the <strong>“Quick”</strong> option.
-                  </span>
-                </li>
-
-                <li>
-                  <strong>PLAY / PAUSE</strong>
-                  <span>
-                    Press <strong>Play</strong> to start your wash.
-                    Press <strong>Pause</strong> to stop.
-                  </span>
-                </li>
-
-              </ol>
-
-            </article>
-
-          </div>
-
-        </section>
-
 
 
         <!-- ===================== MY BOOKINGS ===================== -->
@@ -449,7 +288,6 @@
           id="my-bookings"
           class="bookings-list"
         ></div>
-
 
 
         <!-- ===================== LOGOUT ===================== -->
@@ -523,6 +361,7 @@
 
         </div>
 
+
         <div class="topbar-right">
 
           <button
@@ -551,11 +390,20 @@
 
       <main class="content">
 
+        <!-- ===================== SELECTED MACHINE ===================== -->
         <div
           class="machine-hero"
           id="machine-hero"
         ></div>
 
+
+        <!-- ===================== MACHINE INSTRUCTIONS ===================== -->
+        <!-- This area is filled dynamically for the selected Washy machine. -->
+        <section
+          class="machine-use-guide"
+          id="machine-use-guide"
+          aria-label="Washing machine instructions"
+        ></section>
 
 
         <!-- ===================== LEGEND ===================== -->
@@ -695,7 +543,9 @@
         <div class="success-details">
 
           <div class="success-row">
-            <span class="success-key">User</span>
+            <span class="success-key">
+              User
+            </span>
 
             <span
               class="success-val"
@@ -703,8 +553,11 @@
             >—</span>
           </div>
 
+
           <div class="success-row">
-            <span class="success-key">Machine</span>
+            <span class="success-key">
+              Machine
+            </span>
 
             <span
               class="success-val"
@@ -712,8 +565,11 @@
             >—</span>
           </div>
 
+
           <div class="success-row">
-            <span class="success-key">Starts</span>
+            <span class="success-key">
+              Starts
+            </span>
 
             <span
               class="success-val"
@@ -721,8 +577,11 @@
             >—</span>
           </div>
 
+
           <div class="success-row">
-            <span class="success-key">Ends</span>
+            <span class="success-key">
+              Ends
+            </span>
 
             <span
               class="success-val"
@@ -730,8 +589,11 @@
             >—</span>
           </div>
 
+
           <div class="success-row">
-            <span class="success-key">Token</span>
+            <span class="success-key">
+              Token
+            </span>
 
             <span
               class="success-val mono"
@@ -739,8 +601,11 @@
             >—</span>
           </div>
 
+
           <div class="success-row">
-            <span class="success-key">Booking ID</span>
+            <span class="success-key">
+              Booking ID
+            </span>
 
             <span
               class="success-val mono"
@@ -787,7 +652,9 @@
 
         <div class="modal-head">
 
-          <div class="modal-icon">👤</div>
+          <div class="modal-icon">
+            👤
+          </div>
 
           <h3 id="previous-user-title">
             Booking Details
