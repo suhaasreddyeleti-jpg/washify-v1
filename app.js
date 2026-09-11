@@ -23,7 +23,7 @@
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDQj1VsF1M2LUZtbPamdO7wjWLVJueFb1c",
+  apiKey: "AIzaSyDQg1VsF1M2LUZtbPamdO7wjWLVJueFb1c",
   authDomain: "washify-a87ed.firebaseapp.com",
   projectId: "washify-a87ed",
   storageBucket: "washify-a87ed.firebasestorage.app",
@@ -3720,13 +3720,6 @@ const APP = {
     }
 
 
-    // =======================================================
-    // MACHINE USE INSTRUCTIONS
-    // =======================================================
-
-    this.renderMachineInstructions(m);
-
-
     this.renderSlotGrid(
       'slot-grid-today',
       m.id,
@@ -3739,95 +3732,6 @@ const APP = {
       m.id,
       1
     );
-  },
-
-
-  // =========================================================
-  // MACHINE USE INSTRUCTIONS
-  // =========================================================
-
-  renderMachineInstructions(m) {
-
-    const guide =
-      document.getElementById(
-        'machine-use-guide'
-      );
-
-
-    if (!guide || !m) {
-      return;
-    }
-
-
-    guide.innerHTML = `
-      <div class="machine-use-card">
-
-        <div class="machine-use-title">
-
-          <span class="machine-use-eyebrow">
-            HOW TO USE
-          </span>
-
-          <strong>
-            ${this.escapeHtml(m.name)}
-          </strong>
-
-        </div>
-
-
-        <div class="machine-use-steps">
-
-          <div class="machine-use-step">
-
-            <span class="machine-use-symbol">
-              ⏻
-            </span>
-
-            <span>
-              ON / OFF
-            </span>
-
-          </div>
-
-
-          <div class="machine-use-step quick">
-
-            <span class="machine-use-symbol">
-              QUICK
-            </span>
-
-          </div>
-
-
-          <div class="machine-use-step">
-
-            <span class="machine-use-symbol">
-              ▶
-            </span>
-
-            <span>
-              START
-            </span>
-
-          </div>
-
-
-          <div class="machine-use-step">
-
-            <span class="machine-use-symbol">
-              ⏸
-            </span>
-
-            <span>
-              PAUSE
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
   },
 
 
