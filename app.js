@@ -18,6 +18,7 @@
    - 5-minute pre-completion in-app reminder
    - Booking success animation
    - Cross-device synchronization
+   - Night Mode
    ============================================================ */
 
 
@@ -110,6 +111,12 @@ const APP = {
 
   init() {
 
+    /*
+     * Initialize Night Mode before the application
+     * starts rendering its views.
+     */
+    this.initTheme();
+
     this.bindEvents();
 
     this.tickHandle = setInterval(() => {
@@ -164,6 +171,145 @@ const APP = {
 
       this.render();
     });
+  },
+
+
+  // =========================================================
+  // NIGHT MODE
+  // =========================================================
+
+  initTheme() {
+
+    let savedTheme = null;
+
+    try {
+      savedTheme = localStorage.getItem(
+        'washify-theme'
+      );
+    } catch (e) {
+      console.warn(
+        'Theme preference could not be loaded:',
+        e
+      );
+    }
+
+
+    const isNight =
+      savedTheme === 'night';
+
+
+    document.body.classList.toggle(
+      'night-mode',
+      isNight
+    );
+
+
+    this.updateThemeButtons(
+      isNight
+    );
+  },
+
+
+  toggleTheme() {
+
+    const isNight =
+      !document.body.classList.contains(
+        'night-mode'
+      );
+
+
+    document.body.classList.toggle(
+      'night-mode',
+      isNight
+    );
+
+
+    try {
+
+      localStorage.setItem(
+        'washify-theme',
+        isNight
+          ? 'night'
+          : 'day'
+      );
+
+    } catch (e) {
+
+      console.warn(
+        'Theme preference could not be saved:',
+        e
+      );
+    }
+
+
+    this.updateThemeButtons(
+      isNight
+    );
+  },
+
+
+  updateThemeButtons(isNight) {
+
+    document
+      .querySelectorAll(
+        '#theme-toggle, #theme-toggle-2'
+      )
+      .forEach(
+        button => {
+
+          const icon =
+            button.querySelector(
+              '.theme-toggle-icon'
+            );
+
+          const label =
+            button.querySelector(
+              '.theme-toggle-label'
+            );
+
+
+          if (isNight) {
+
+            if (icon) {
+              icon.textContent = '☀';
+            }
+
+            if (label) {
+              label.textContent = 'Day';
+            }
+
+            button.setAttribute(
+              'aria-label',
+              'Switch to day mode'
+            );
+
+            button.setAttribute(
+              'title',
+              'Switch to day mode'
+            );
+
+          } else {
+
+            if (icon) {
+              icon.textContent = '☾';
+            }
+
+            if (label) {
+              label.textContent = 'Night';
+            }
+
+            button.setAttribute(
+              'aria-label',
+              'Switch to night mode'
+            );
+
+            button.setAttribute(
+              'title',
+              'Switch to night mode'
+            );
+          }
+        }
+      );
   },
 
 
@@ -395,6 +541,25 @@ const APP = {
       (e) => {
 
         const t = e.target;
+
+
+        // -----------------------------------------------------
+        // NIGHT MODE
+        // -----------------------------------------------------
+
+        if (
+          t.closest(
+            '#theme-toggle, #theme-toggle-2'
+          )
+        ) {
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          this.toggleTheme();
+
+          return;
+        }
 
 
         // -----------------------------------------------------
@@ -1483,6 +1648,7 @@ const APP = {
         Number(b.startTime) < endTime &&
 
         Number(b.endTime) > startTime
+
     ) || null;
   },
 
@@ -2175,6 +2341,7 @@ const APP = {
         'previous-user-modal'
       );
 
+
     if (!modal) {
       return;
     }
@@ -2277,6 +2444,7 @@ const APP = {
       document.getElementById(
         'previous-user-modal'
       );
+
 
     if (modal) {
 
@@ -2954,6 +3122,16 @@ const APP = {
     this.updateAwaitingBanner();
 
     this.updateCompletionReminder();
+
+    /*
+     * Keep Night Mode button state correct after
+     * any render operation.
+     */
+    this.updateThemeButtons(
+      document.body.classList.contains(
+        'night-mode'
+      )
+    );
   },
 
 
@@ -3759,11 +3937,13 @@ const APP = {
         let cls =
           'slot free';
 
+
         let sub =
           this.slotDurationLabel(
             startMs,
             endMs
           );
+
 
         let disabled = '';
 
@@ -3791,6 +3971,7 @@ const APP = {
 
             sub =
               'YOUR SLOT';
+
 
             /*
              * Keep it disabled because the user
@@ -4104,7 +4285,8 @@ const APP = {
 
 
     const m =
-      totalMin % 60;
+      totalMin %
+      60;
 
 
     return h > 0
@@ -4136,7 +4318,8 @@ const APP = {
 
 
     const m =
-      totalMin % 60;
+      totalMin %
+      60;
 
 
     if (
