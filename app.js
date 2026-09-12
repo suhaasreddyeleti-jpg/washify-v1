@@ -19,6 +19,7 @@
    - Booking success animation
    - Cross-device synchronization
    - Night Mode
+   - Per-machine "Easy Washing" usage guide
    ============================================================ */
 
 
@@ -3720,6 +3721,13 @@ const APP = {
     }
 
 
+    /*
+     * NEW: Fill in the "Easy Washing" usage guide
+     * for whichever machine (Washy 1 / 2 / 3) was opened.
+     */
+    this.renderMachineUseGuide(m);
+
+
     this.renderSlotGrid(
       'slot-grid-today',
       m.id,
@@ -3732,6 +3740,63 @@ const APP = {
       m.id,
       1
     );
+  },
+
+
+  // =========================================================
+  // MACHINE USE GUIDE ("EASY WASHING" INSTRUCTIONS)
+  // =========================================================
+
+  renderMachineUseGuide(m) {
+
+    const guide =
+      document.getElementById(
+        'machine-use-guide'
+      );
+
+
+    if (!guide) {
+      return;
+    }
+
+
+    guide.innerHTML = `
+
+      <div class="machine-use-card">
+
+        <div class="machine-use-title">
+
+          <span class="machine-use-eyebrow">
+            Easy Washing
+          </span>
+
+          <strong>
+            ${this.escapeHtml(m.name)}
+          </strong>
+
+        </div>
+
+        <div class="machine-use-steps">
+
+          <div class="machine-use-step">
+            <span class="machine-use-symbol" aria-hidden="true">⏻</span>
+            <span>1 · Press "ON / OFF"</span>
+          </div>
+
+          <div class="machine-use-step">
+            <span class="machine-use-symbol" aria-hidden="true">▽</span>
+            <span>2 · Select "Quick"</span>
+          </div>
+
+          <div class="machine-use-step quick">
+            <span class="machine-use-symbol" aria-hidden="true">▶ ⏸</span>
+            <span>3 · Play to start / Pause to stop</span>
+          </div>
+
+        </div>
+
+      </div>
+    `;
   },
 
 
@@ -3813,7 +3878,7 @@ const APP = {
 
 
     while (
-      start <
+      start 
       dayEnd.getTime()
     ) {
 
@@ -4074,7 +4139,7 @@ const APP = {
            * starting within 30 minutes.
            */
           if (
-            startMs - now <
+            startMs - now 
               30 * 60 * 1000
           ) {
 
