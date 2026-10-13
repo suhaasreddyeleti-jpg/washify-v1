@@ -73,17 +73,17 @@ const APP = {
     {
       id: 'a',
       code: 'A',
-      name: 'WASHY 1'
+      name: 'WASHY 1.'
     },
     {
       id: 'b',
       code: 'B',
-      name: 'WASHY 2'
+      name: 'WASHY 2.'
     },
     {
       id: 'c',
       code: 'C',
-      name: 'WASHY 3'
+      name: 'WASHY 3.'
     }
   ],
 
